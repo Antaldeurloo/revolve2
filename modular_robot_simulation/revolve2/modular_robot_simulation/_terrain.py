@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from revolve2.simulation.scene.geometry import Geometry
+from revolve2.simulation.revolve2.simulation.scene.geometry import Geometry
 
 
 @dataclass

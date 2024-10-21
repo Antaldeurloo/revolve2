@@ -1,15 +1,15 @@
 import concurrent.futures
 import logging
 import os
-
-from revolve2.simulation.scene import SimulationState
-from revolve2.simulation.simulator import Batch, Simulator
+from revolve2.simulation.revolve2.simulation.scene import SimulationState
+from revolve2.simulation.revolve2.simulation.simulator import Batch, Simulator
 
 from ._simulate_manual_scene import simulate_manual_scene
 
-if os.environ["RERUN"] == "True":
+if os.environ.get("RERUN", False):
+
     from ._simulate_scene_rerun import simulate_scene
-elif os.environ["RERUN"] == "False":
+else:
     from ._simulate_scene import simulate_scene
 
 

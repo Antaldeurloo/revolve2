@@ -1,15 +1,16 @@
 """Main script for the example."""
-
-from revolve2.ci_group import terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
-from revolve2.experimentation.logging import setup_logging
-from revolve2.modular_robot import ModularRobot, ModularRobotControlInterface
-from revolve2.modular_robot.body import RightAngles
-from revolve2.modular_robot.body.v2 import ActiveHingeV2, BodyV2, BrickV2
-from revolve2.modular_robot.brain import Brain, BrainInstance
-from revolve2.modular_robot.sensor_state import ModularRobotSensorState
-from revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
-from revolve2.simulators.mujoco_simulator import LocalSimulator
+import sys
+sys.path.insert(0, 'D:\antal\thesis_project\.venv\revolve2\ci_group\revolve2\ci_group')
+from revolve2.ci_group.revolve2.ci_group import terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot, ModularRobotControlInterface
+from revolve2.modular_robot.revolve2.modular_robot.body import RightAngles
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import ActiveHingeV2, BodyV2, BrickV2
+from revolve2.modular_robot.revolve2.modular_robot.brain import Brain, BrainInstance
+from revolve2.modular_robot.revolve2.modular_robot.sensor_state import ModularRobotSensorState
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
 
 
 def make_body() -> (

@@ -1,14 +1,14 @@
 """Evaluator class."""
 
-from revolve2.ci_group import fitness_functions, terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
-from revolve2.modular_robot import ModularRobot
-from revolve2.modular_robot_simulation import (
+from revolve2.ci_group.revolve2.ci_group import fitness_functions, terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import (
     ModularRobotScene,
     Terrain,
     simulate_scenes,
 )
-from revolve2.simulators.mujoco_simulator import LocalSimulator
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
 
 
 class Evaluator:

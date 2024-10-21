@@ -15,10 +15,10 @@ from population import Population
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
-from revolve2.experimentation.database import OpenMethod, open_database_sqlite
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.optimization.ea import population_management, selection
-from revolve2.experimentation.rng import make_rng, seed_from_time
+from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.optimization.ea import population_management, selection
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng, seed_from_time
 
 
 def select_parents(
@@ -40,7 +40,7 @@ def select_parents(
                 2,
                 [individual.genotype for individual in population.individuals],
                 [individual.fitness for individual in population.individuals],
-                lambda _, fitnesses: selection.tournament(rng, fitnesses, k=1),
+                lambda _, fitnesses: selection.tournament(rng, fitnesses, k=1, random=False),
             )
             for _ in range(offspring_size)
         ],
@@ -69,7 +69,7 @@ def select_survivors(
             n,
             genotypes,
             fitnesses,
-            lambda _, fitnesses: selection.tournament(rng, fitnesses, k=2),
+            lambda _, fitnesses: selection.tournament(rng, fitnesses, k=2, random=False),
         ),
     )
 
@@ -210,7 +210,7 @@ def main() -> None:
     # and we must manually figure out what to do with the existing database.
     # (maybe throw away?)
     dbengine = open_database_sqlite(
-        config.DATABASE_FILE, open_method=OpenMethod.NOT_EXISTS_AND_CREATE
+        config.DATABASE_FILE, open_method=OpenMethod.OVERWITE_IF_EXISTS
     )
     # Create the structure of the database.
     # Take a look at the 'Base' class.

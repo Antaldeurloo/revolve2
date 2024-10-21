@@ -1,7 +1,7 @@
-from revolve2.modular_robot import ModularRobot
-from revolve2.modular_robot.body.base import Body
-from revolve2.modular_robot.brain.dummy import BrainDummy
-from revolve2.simulation.simulator import BatchParameters, Simulator
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
+from revolve2.modular_robot.revolve2.modular_robot.body.base import Body
+from revolve2.modular_robot.revolve2.modular_robot.brain.dummy import BrainDummy
+from revolve2.simulation.revolve2.simulation.simulator import BatchParameters, Simulator
 
 from ._modular_robot_scene import ModularRobotScene
 from ._simulate_scenes import simulate_scenes

@@ -2,14 +2,14 @@
 
 import logging
 
-from revolve2.ci_group import fitness_functions, modular_robots_v2, terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.rng import make_rng_time_seed
-from revolve2.modular_robot import ModularRobot
-from revolve2.modular_robot.brain.cpg import BrainCpgNetworkNeighborRandom
-from revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
-from revolve2.simulators.mujoco_simulator import LocalSimulator
+from revolve2.ci_group.revolve2.ci_group import fitness_functions, modular_robots_v2, terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng_time_seed
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
+from revolve2.modular_robot.revolve2.modular_robot.brain.cpg import BrainCpgNetworkNeighborRandom
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
 
 
 def main() -> None:
@@ -27,12 +27,12 @@ def main() -> None:
     robot = ModularRobot(body, brain)
 
     # Create the scene.
-    scene = ModularRobotScene(terrain=terrains.flat())
+    scene = ModularRobotScene(terrain=terrains.tilted_flat())
     scene.add_robot(robot)
 
     # Create the simulator.
     # We set enable the headless flag, which will prevent visualization of the simulation, speeding it up.
-    simulator = LocalSimulator(headless=False)
+    simulator = LocalSimulator(headless=True)
     batch_parameters = make_standard_batch_parameters()
 
     # Obtain the state of the simulation, measured at a predefined interval as defined in the batch parameters.
@@ -52,7 +52,7 @@ def main() -> None:
 
     # Calculate the xy displacement.
     xy_displacement = fitness_functions.xy_displacement(
-        robot_state_begin, robot_state_end
+        robot_state_begin.get_pose().position.x, robot_state_end.get_pose().position.y
     )
 
     logging.info(xy_displacement)

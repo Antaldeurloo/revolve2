@@ -1,5 +1,5 @@
-from revolve2.modular_robot.brain import BrainInstance
-from revolve2.simulation.scene import (
+from revolve2.modular_robot.revolve2.modular_robot.brain import BrainInstance
+from revolve2.simulation.revolve2.simulation.scene import (
     ControlInterface,
     SimulationHandler,
     SimulationState,

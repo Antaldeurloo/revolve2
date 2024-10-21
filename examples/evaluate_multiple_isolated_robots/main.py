@@ -2,14 +2,14 @@
 
 import logging
 
-from revolve2.ci_group import fitness_functions, modular_robots_v1, terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.rng import make_rng_time_seed
-from revolve2.modular_robot import ModularRobot
-from revolve2.modular_robot.brain.cpg import BrainCpgNetworkNeighborRandom
-from revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
-from revolve2.simulators.mujoco_simulator import LocalSimulator
+from revolve2.ci_group.revolve2.ci_group import fitness_functions, modular_robots_v1, terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng_time_seed
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
+from revolve2.modular_robot.revolve2.modular_robot.brain.cpg import BrainCpgNetworkNeighborRandom
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
 
 
 def main() -> None:
@@ -44,7 +44,7 @@ def main() -> None:
     # A simulator can run multiple scene in parallel.
     # For the MuJoCo simulator, we can control this using the 'num_simulators' argument.
     # Increasing this number causes more simulations to run at the same time.
-    simulator = LocalSimulator(headless=True, num_simulators=4)
+    simulator = LocalSimulator(headless=True, num_simulators=3)
 
     # Simulate all scenes.
     scene_states = simulate_scenes(
@@ -56,8 +56,8 @@ def main() -> None:
     # Calculate the xy displacements.
     xy_displacements = [
         fitness_functions.xy_displacement(
-            states[0].get_modular_robot_simulation_state(robot),
-            states[-1].get_modular_robot_simulation_state(robot),
+            states[0].get_modular_robot_simulation_state(robot).get_pose().position.x,
+            states[-1].get_modular_robot_simulation_state(robot).get_pose().position.y,
         )
         for robot, states in zip(robots, scene_states)
     ]

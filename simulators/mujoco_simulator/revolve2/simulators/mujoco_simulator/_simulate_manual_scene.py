@@ -3,11 +3,11 @@ import logging
 
 import mujoco
 
-from revolve2.ci_group.simulation_parameters import (
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import (
     STANDARD_CONTROL_FREQUENCY,
     STANDARD_SIMULATION_TIMESTEP,
 )
-from revolve2.simulation.scene import Scene
+from revolve2.simulation.revolve2.simulation.scene import Scene
 
 from ._control_interface_impl import ControlInterfaceImpl
 from ._custom_mujoco_viewer import CustomMujocoViewer, CustomMujocoViewerMode

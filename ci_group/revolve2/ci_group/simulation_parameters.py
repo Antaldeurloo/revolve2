@@ -1,5 +1,5 @@
 """Standard simulation functions and parameters."""
-from revolve2.simulation.simulator import BatchParameters
+from revolve2.simulation.revolve2.simulation.simulator import BatchParameters
 
 STANDARD_SIMULATION_TIME = 30
 STANDARD_SAMPLING_FREQUENCY = 5

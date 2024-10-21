@@ -1,16 +1,20 @@
 """Main script for the example."""
-
+import sys
+sys.path.insert(0, 'D:\antal\thesis_project\.venv\revolve2\ci_group\revolve2\ci_group')
+sys.path.insert(0, 'D:\antal\thesis_project\.venv')
 import logging
+import random
 
-from revolve2.ci_group import modular_robots_v2, terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
-from revolve2.experimentation.logging import setup_logging
-from revolve2.modular_robot import ModularRobot, ModularRobotControlInterface
-from revolve2.modular_robot.body.base import ActiveHinge, ActiveHingeSensor, IMUSensor
-from revolve2.modular_robot.brain import Brain, BrainInstance
-from revolve2.modular_robot.sensor_state import ModularRobotSensorState
-from revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
-from revolve2.simulators.mujoco_simulator import LocalSimulator
+from revolve2.ci_group.revolve2.ci_group import modular_robots_v2, terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot, ModularRobotControlInterface
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHinge, ActiveHingeSensor, IMUSensor
+
+from revolve2.modular_robot.revolve2.modular_robot.brain import Brain, BrainInstance
+from revolve2.modular_robot.revolve2.modular_robot.sensor_state import ModularRobotSensorState
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
 
 
 class ANNBrainInstance(BrainInstance):
@@ -67,9 +71,13 @@ class ANNBrainInstance(BrainInstance):
 
         # Here you can implement your controller.
         # The current controller does nothing except for always settings the joint positions to 0.5.
+
         for active_hinge, sensor in zip(self.active_hinges, sensors):
-            target = 0.5
+            target = sensor_state.get_active_hinge_sensor_state(sensor).position
+            if random.uniform(0,1) > 0.94:
+                target = 0.5 + random.uniform(-3, 3)
             control_interface.set_active_hinge_target(active_hinge, target)
+            logging.info(target)
 
 
 class ANNBrain(Brain):

@@ -4,15 +4,15 @@ import logging
 
 from pyrr import Vector3
 
-from revolve2.ci_group import fitness_functions, modular_robots_v1, terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.rng import make_rng_time_seed
-from revolve2.modular_robot import ModularRobot
-from revolve2.modular_robot.brain.cpg import BrainCpgNetworkNeighborRandom
-from revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
-from revolve2.simulation.scene import Pose
-from revolve2.simulators.mujoco_simulator import LocalSimulator
+from revolve2.ci_group.revolve2.ci_group import fitness_functions, modular_robots_v1, terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng_time_seed
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
+from revolve2.modular_robot.revolve2.modular_robot.brain.cpg import BrainCpgNetworkNeighborRandom
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import ModularRobotScene, simulate_scenes
+from revolve2.simulation.revolve2.simulation.scene import Pose
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
 
 
 def main() -> None:
@@ -58,8 +58,8 @@ def main() -> None:
     # Calculate the xy displacements.
     xy_displacements = [
         fitness_functions.xy_displacement(
-            scene_states[0].get_modular_robot_simulation_state(robot),
-            scene_states[-1].get_modular_robot_simulation_state(robot),
+            scene_states[0].get_modular_robot_simulation_state(robot).get_pose().position.x,
+            scene_states[-1].get_modular_robot_simulation_state(robot).get_pose().position.y,
         )
         for robot in robots
     ]

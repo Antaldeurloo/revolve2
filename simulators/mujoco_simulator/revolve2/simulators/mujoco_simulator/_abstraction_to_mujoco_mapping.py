@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from revolve2.simulation.scene import IMUSensor, JointHinge, MultiBodySystem, UUIDKey
+from revolve2.simulation.revolve2.simulation.scene import IMUSensor, JointHinge, MultiBodySystem, UUIDKey
 
 
 @dataclass

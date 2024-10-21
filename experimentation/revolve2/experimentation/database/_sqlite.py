@@ -38,6 +38,7 @@ def open_database_sqlite(
 
 def __common(db_file: str, open_method: OpenMethod = OpenMethod.OPEN_IF_EXISTS) -> None:
     exists = os.path.exists(db_file)
+    print(os.path)
     if open_method == OpenMethod.OPEN_IF_EXISTS:
         if not exists:
             raise RuntimeError(
@@ -47,10 +48,12 @@ def __common(db_file: str, open_method: OpenMethod = OpenMethod.OPEN_IF_EXISTS) 
         os.makedirs(Path(db_file).parent, exist_ok=True)
     elif open_method == OpenMethod.NOT_EXISTS_AND_CREATE:
         if exists:
+            
             raise RuntimeError(
                 f"Open check set to NOT_EXISTS_AND_CREATE and database exists: {db_file}"
             )
         os.makedirs(Path(db_file).parent, exist_ok=True)
+    
     elif open_method == OpenMethod.OVERWITE_IF_EXISTS:
         if exists:
             os.remove(db_file)

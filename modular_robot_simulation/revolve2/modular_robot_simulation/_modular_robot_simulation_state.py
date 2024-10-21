@@ -1,5 +1,5 @@
-from revolve2.modular_robot.body import Module
-from revolve2.simulation.scene import MultiBodySystem, Pose, SimulationState
+from revolve2.modular_robot.revolve2.modular_robot.body import Module
+from revolve2.simulation.revolve2.simulation.scene import MultiBodySystem, Pose, SimulationState
 import numpy as np
 
 class ModularRobotSimulationState:

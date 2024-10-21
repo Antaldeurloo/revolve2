@@ -1,6 +1,6 @@
 from typing import overload
 
-from revolve2.simulation.simulator import BatchParameters, RecordSettings, Simulator
+from revolve2.simulation.revolve2.simulation.simulator import BatchParameters, RecordSettings, Simulator
 
 from ._modular_robot_scene import ModularRobotScene
 from ._scene_simulation_state import SceneSimulationState

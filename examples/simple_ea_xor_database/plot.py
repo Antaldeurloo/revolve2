@@ -9,8 +9,8 @@ from individual import Individual
 from population import Population
 from sqlalchemy import select
 
-from revolve2.experimentation.database import OpenMethod, open_database_sqlite
-from revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
 
 
 def main() -> None:

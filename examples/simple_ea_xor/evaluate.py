@@ -39,8 +39,8 @@ def evaluate(parameters: npt.NDArray[np.float_]) -> float:
     outputs = np.array([evaluate_network(parameters, input) for input in inputs])
 
     # Calculate the difference between the network outputs and the expect outputs
+    
     errors = outputs - expected_outputs
-
     # Return the sum of squared errors.
     # 0 would be an optimizal result.
     # We invert so we can maximize the fitness instead of minimize.

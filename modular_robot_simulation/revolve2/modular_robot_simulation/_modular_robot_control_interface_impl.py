@@ -1,8 +1,8 @@
 import numpy as np
 
-from revolve2.modular_robot import ModularRobotControlInterface
-from revolve2.modular_robot.body.base import ActiveHinge
-from revolve2.simulation.scene import ControlInterface, UUIDKey
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobotControlInterface
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHinge
+from revolve2.simulation.revolve2.simulation.scene import ControlInterface, UUIDKey
 
 from ._build_multi_body_systems import BodyToMultiBodySystemMapping
 

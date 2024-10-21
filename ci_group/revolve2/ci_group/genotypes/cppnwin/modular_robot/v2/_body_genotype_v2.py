@@ -6,7 +6,7 @@ import multineat
 import numpy as np
 from typing_extensions import Self
 
-from revolve2.modular_robot.body.v2 import BodyV2
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import BodyV2
 
 from ..._multineat_genotype_pickle_wrapper import MultineatGenotypePickleWrapper
 from ..._multineat_rng_from_random import multineat_rng_from_random
@@ -115,4 +115,4 @@ class BodyGenotypeV2:
 
         :returns: The created robot.
         """
-        return develop(self.body.genotype)
+        return develop(self.body.genotype, )

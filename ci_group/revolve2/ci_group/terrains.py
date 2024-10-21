@@ -7,10 +7,10 @@ import numpy.typing as npt
 from noise import pnoise2
 from pyrr import Quaternion, Vector3
 
-from revolve2.modular_robot_simulation import Terrain
-from revolve2.simulation.scene import Pose
-from revolve2.simulation.scene.geometry import GeometryHeightmap, GeometryPlane
-from revolve2.simulation.scene.vector2 import Vector2
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import Terrain
+from revolve2.simulation.revolve2.simulation.scene import Pose
+from revolve2.simulation.revolve2.simulation.scene.geometry import GeometryHeightmap, GeometryPlane
+from revolve2.simulation.revolve2.simulation.scene.vector2 import Vector2
 
 
 def flat(size: Vector2 = Vector2([20.0, 20.0])) -> Terrain:

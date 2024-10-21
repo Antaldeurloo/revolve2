@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 
 from pyrr import Quaternion, Vector3
 
-from revolve2.modular_robot.body import Module
-from revolve2.simulation.scene import Pose, RigidBody
+from revolve2.modular_robot.revolve2.modular_robot.body import Module
+from revolve2.simulation.revolve2.simulation.scene import Pose, RigidBody
 
 
 @dataclass

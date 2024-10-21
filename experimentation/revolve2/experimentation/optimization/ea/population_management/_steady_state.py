@@ -48,4 +48,4 @@ def steady_state(
     selected_new = [
         s - len(old_fitnesses) for s in selection if s >= len(old_fitnesses)
     ]
-    return selected_old, selected_new, selection
+    return (selected_old, selected_new)

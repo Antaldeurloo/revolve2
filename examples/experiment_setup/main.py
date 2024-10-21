@@ -4,8 +4,8 @@ import logging
 import config
 import numpy as np
 
-import revolve2.experimentation.rng
-from revolve2.experimentation.logging import setup_logging
+import revolve2.experimentation.revolve2.experimentation.rng
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
 
 
 def run_experiment(num_samples: int, probability: float) -> None:
@@ -33,7 +33,7 @@ def run_experiment(num_samples: int, probability: float) -> None:
         # This seed will be stored in the logs.
         # If we ever need to reproduce our results we can then use the seed from the log instead of generating a new one.
         # The function automatically logs the seed for you, so you cannot forget to.
-        rng = revolve2.experimentation.rng.make_rng_time_seed()
+        rng = revolve2.experimentation.revolve2.experimentation.rng.make_rng_time_seed()
 
         # If you run with a set seed, use the following lines instead.
         # SEED = 1234
@@ -41,6 +41,7 @@ def run_experiment(num_samples: int, probability: float) -> None:
 
         # Perform the experiment, sampling from a binomial distribution using the given paramaters.
         samples = rng.binomial(n=1, p=probability, size=num_samples)
+        print(samples)
         # Calculate the ratio of success and save it.
         success_ratios.append(np.sum(samples == 1) / num_samples)
 
@@ -88,4 +89,5 @@ def main() -> None:
 # This leads to all kinds of unintended behaviour that is hard to debug.
 # See also various articles, such as https://stackoverflow.com/questions/419163/what-does-if-name-main-do
 if __name__ == "__main__":
+
     main()

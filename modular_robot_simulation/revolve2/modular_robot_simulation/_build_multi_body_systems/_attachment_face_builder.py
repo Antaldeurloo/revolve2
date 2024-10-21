@@ -1,5 +1,5 @@
-from revolve2.modular_robot.body.base import AttachmentFace
-from revolve2.simulation.scene import MultiBodySystem, Pose, RigidBody
+from revolve2.modular_robot.revolve2.modular_robot.body.base import AttachmentFace
+from revolve2.simulation.revolve2.simulation.scene import MultiBodySystem, Pose, RigidBody
 
 from ._body_to_multi_body_system_mapping import BodyToMultiBodySystemMapping
 from ._builder import Builder

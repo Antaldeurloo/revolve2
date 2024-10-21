@@ -22,9 +22,9 @@ except Exception as e:
     print("Failed to fix absl logging bug", e)
     pass
 
-from revolve2.simulation.scene import Scene, UUIDKey
-from revolve2.simulation.scene.conversion import multi_body_system_to_urdf
-from revolve2.simulation.scene.geometry import Geometry, GeometryHeightmap
+from revolve2.simulation.revolve2.simulation.scene import Scene, UUIDKey
+from revolve2.simulation.revolve2.simulation.scene.conversion import multi_body_system_to_urdf
+from revolve2.simulation.revolve2.simulation.scene.geometry import Geometry, GeometryHeightmap
 
 from ._abstraction_to_mujoco_mapping import (
     AbstractionToMujocoMapping,

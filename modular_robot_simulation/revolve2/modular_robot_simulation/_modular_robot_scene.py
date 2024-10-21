@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
-from revolve2.modular_robot import ModularRobot
-from revolve2.simulation.scene import MultiBodySystem, Pose, Scene, UUIDKey
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
+from revolve2.simulation.revolve2.simulation.scene import MultiBodySystem, Pose, Scene, UUIDKey
 
 from ._build_multi_body_systems import BodyToMultiBodySystemConverter
 from ._convert_terrain import convert_terrain

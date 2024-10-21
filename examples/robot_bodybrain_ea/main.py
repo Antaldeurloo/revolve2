@@ -11,9 +11,9 @@ from evaluator import Evaluator
 from genotype import Genotype
 from individual import Individual
 
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.optimization.ea import population_management, selection
-from revolve2.experimentation.rng import make_rng_time_seed
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.optimization.ea import population_management, selection
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng_time_seed
 
 
 def select_parents(
@@ -133,6 +133,7 @@ def main() -> None:
 
     # Evaluate the initial population.
     logging.info("Evaluating initial population.")
+    print(initial_genotypes[0])
     initial_fitnesses = evaluator.evaluate(
         [genotype.develop() for genotype in initial_genotypes]
     )

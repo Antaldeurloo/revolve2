@@ -1,4 +1,4 @@
-from revolve2.simulation.scene import MultiBodySystem, Pose, RigidBody
+from revolve2.simulation.revolve2.simulation.scene import MultiBodySystem, Pose, RigidBody
 
 from ._terrain import Terrain
 

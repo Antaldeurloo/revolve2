@@ -1,5 +1,5 @@
-from revolve2.modular_robot.body import Color
-from revolve2.simulation.scene import Color as SimulationColor
+from revolve2.modular_robot.revolve2.modular_robot.body import Color
+from revolve2.simulation.revolve2.simulation.scene import Color as SimulationColor
 
 
 def convert_color(color: Color) -> SimulationColor:

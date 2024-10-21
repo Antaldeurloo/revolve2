@@ -6,7 +6,7 @@ from base import Base
 from experiment import Experiment
 from population import Population
 
-from revolve2.experimentation.database import HasId
+from revolve2.experimentation.revolve2.experimentation.database import HasId
 
 
 class Generation(Base, HasId):

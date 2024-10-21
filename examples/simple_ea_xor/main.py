@@ -9,9 +9,9 @@ from evaluate import evaluate
 from genotype import Genotype
 from individual import Individual
 
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.optimization.ea import population_management, selection
-from revolve2.experimentation.rng import make_rng_time_seed
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.optimization.ea import population_management, selection
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng_time_seed
 
 
 def select_parents(
@@ -33,7 +33,7 @@ def select_parents(
                 2,
                 [individual.genotype for individual in population],
                 [individual.fitness for individual in population],
-                lambda _, fitnesses: selection.tournament(rng, fitnesses, k=1),
+                lambda _, fitnesses: selection.tournament(rng, fitnesses, k=1,random= False),
             )
             for _ in range(offspring_size)
         ],
@@ -62,7 +62,7 @@ def select_survivors(
             n,
             genotypes,
             fitnesses,
-            lambda _, fitnesses: selection.tournament(rng, fitnesses, k=2),
+            lambda _, fitnesses: selection.tournament(rng, fitnesses, k=2,random= False),
         ),
     )
 
@@ -112,6 +112,7 @@ def main() -> None:
 
     # Set the current generation to 0.
     generation_index = 0
+    
 
     # Start the actual optimization process.
     logging.info("Start optimization process.")
@@ -135,6 +136,8 @@ def main() -> None:
         ]
 
         logging.info(f"Max fitness: {max(offspring_fitnesses)}")
+        
+        
 
         # Make an intermediate offspring population.
         offspring_population = [
@@ -148,7 +151,10 @@ def main() -> None:
             population,
             offspring_population,
         )
-
+        population_genotypes = []
+        for ind in population:
+            population_genotypes.append(ind.genotype.parameters)
+        logging.info(max(population_genotypes, key=evaluate))
         # Increase the generation index counter.
         generation_index += 1
 

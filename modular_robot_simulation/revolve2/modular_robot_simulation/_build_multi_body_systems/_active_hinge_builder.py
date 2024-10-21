@@ -1,7 +1,7 @@
 from pyrr import Quaternion, Vector3
 
-from revolve2.modular_robot.body.base import ActiveHinge
-from revolve2.simulation.scene import (
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHinge
+from revolve2.simulation.revolve2.simulation.scene import (
     AABB,
     JointHinge,
     MultiBodySystem,
@@ -9,8 +9,8 @@ from revolve2.simulation.scene import (
     RigidBody,
     UUIDKey,
 )
-from revolve2.simulation.scene.geometry import GeometryBox
-from revolve2.simulation.scene.geometry.textures import Texture
+from revolve2.simulation.revolve2.simulation.scene.geometry import GeometryBox
+from revolve2.simulation.revolve2.simulation.scene.geometry.textures import Texture
 
 from ._body_to_multi_body_system_mapping import BodyToMultiBodySystemMapping
 from ._builder import Builder

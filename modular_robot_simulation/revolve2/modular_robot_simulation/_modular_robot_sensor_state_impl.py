@@ -1,10 +1,10 @@
-from revolve2.modular_robot.body.base import ActiveHingeSensor, IMUSensor
-from revolve2.modular_robot.sensor_state import (
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHingeSensor, IMUSensor
+from revolve2.modular_robot.revolve2.modular_robot.sensor_state import (
     ActiveHingeSensorState,
     IMUSensorState,
     ModularRobotSensorState,
 )
-from revolve2.simulation.scene import SimulationState, UUIDKey
+from revolve2.simulation.revolve2.simulation.scene import SimulationState, UUIDKey
 
 from ._active_hinge_sensor_state_impl import ActiveHingeSensorStateImpl
 from ._build_multi_body_systems import BodyToMultiBodySystemMapping

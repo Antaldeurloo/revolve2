@@ -3,9 +3,9 @@ from typing import cast
 import multineat
 import numpy as np
 
-from revolve2.modular_robot.body.base import ActiveHinge, Body
-from revolve2.modular_robot.body.v2 import ActiveHingeV2, BrickV2
-from revolve2.modular_robot.brain.cpg import (
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHinge, Body
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import ActiveHingeV2, BrickV2
+from revolve2.modular_robot.revolve2.modular_robot.brain.cpg import (
     BrainCpgNetworkNeighbor as ModularRobotBrainCpgNetworkNeighbor,
 )
 

@@ -3,8 +3,8 @@ from dataclasses import dataclass
 import math
 import numpy as np
 from pyrr import Vector3, Quaternion
-from revolve2.modular_robot.body import Module
-from revolve2.modular_robot.body.v2 import ActiveHingeV2, BodyV2, BrickV2, CoreV2
+from revolve2.modular_robot.revolve2.modular_robot.body import Module
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import ActiveHingeV2, BodyV2, BrickV2, CoreV2
 import scipy.sparse as sp
 
 @dataclass

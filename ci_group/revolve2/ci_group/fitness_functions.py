@@ -3,7 +3,7 @@
 from copy import deepcopy
 import math
 import numpy as np
-from revolve2.modular_robot_simulation import ModularRobotSimulationState
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import ModularRobotSimulationState
 
 
 def xy_displacement(x_distance: float, y_distance: float) -> float:

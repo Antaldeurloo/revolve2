@@ -1,6 +1,8 @@
 """Main script for the example."""
-from revolve2.ci_group import terrains
-from revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+import sys
+sys.path.insert(0, 'D:\antal\thesis_project\.venv\revolve2\ci_group\revolve2\ci_group')
+from revolve2.ci_group.revolve2.ci_group import terrains
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
 from revolve2.experimentation.logging import setup_logging
 from revolve2.experimentation.rng import make_rng_time_seed
 from revolve2.modular_robot import ModularRobot

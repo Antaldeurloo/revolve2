@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+import pandas as pd
 
 # Set algorithm, mode and file name from command line arguments.
 algo = sys.argv[1]
@@ -56,14 +57,22 @@ import shutil
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from revolve2.experimentation.database import OpenMethod, open_database_sqlite
-from revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+
+from revolve2.ci_group.revolve2.ci_group.simulation_parameters import make_standard_batch_parameters
+from revolve2.simulators.mujoco_simulator.revolve2.simulators.mujoco_simulator import LocalSimulator
+from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import (
+    ModularRobotScene,
+    Terrain,
+    simulate_scenes,
+)
 
 
 def main() -> None:
     """Perform the rerun."""
     setup_logging()
-
+    print(config.DATABASE_FILE)
     # Load the best individual from the database.
     dbengine = open_database_sqlite(
         config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
@@ -79,10 +88,32 @@ def main() -> None:
             .join_from(Generation, Population, Generation.population_id == Population.id)
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-            .order_by(Individual.fitness.desc()).limit(1000)
+            .order_by(Individual.fitness.desc()).limit(1)
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
+    data = [
+    {
+        "genotype": genotype,  # Store the Genotype object directly
+        "fitness": fitness,
+        "energy_used": energy_used,
+        "efficiency": efficiency,
+        "x_distance": x_distance,
+        "y_distance": y_distance,
+        "experiment_id": experiment_id,
+        "generation_index": generation_index,
+        "body_id": body_id,
+    }
+    for genotype, fitness, energy_used, efficiency, x_distance, y_distance, experiment_id, generation_index, body_id in rows
+    ]
 
-    
+# Convert to DataFrame
+    df = pd.DataFrame(data)
+
+# Display the DataFrame
+    print(df)
+    print(rows[0])
+
+
+
     # highest = 0
     # for irow, row in enumerate(rows):
     #     if row[1] >= highest:
@@ -94,6 +125,8 @@ def main() -> None:
 
     # Rerun
     for irow, row in enumerate(rows[61:]): # 30, 60, 61
+        print(row)
+        
         genotype = row[0]
         fitness = row[1]
         energy_used = row[2]
@@ -123,7 +156,7 @@ def main() -> None:
         logging.info(f"Y distance: {y_distance}")
         logging.info(f"Body ID: {body_id}")
 
-
+        print(headless)
         # Create the evaluator.
         evaluator = Evaluator(headless = headless, num_simulators = 1, terrain = config.TERRAIN, fitness_function = config.FITNESS_FUNCTION,
                             simulation_time = config.SIMULATION_TIME, sampling_frequency = config.SAMPLING_FREQUENCY,
@@ -150,6 +183,7 @@ if __name__ == "__main__":
             for filename in os.listdir(directory_path):
                 # Construct the full path
                 file_path = os.path.join(directory_path, filename)
+                print(file_path)
 
                 # Check if it's a file
                 if os.path.isfile(file_path):

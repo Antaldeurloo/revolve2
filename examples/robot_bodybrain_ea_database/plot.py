@@ -30,8 +30,8 @@ from population import Population
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from revolve2.experimentation.database import OpenMethod, open_database_sqlite
-from revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
 
 
 def main(column, path) -> None:

@@ -11,8 +11,8 @@ import os
 import pandas as pd
 from pyrr import Quaternion, Vector3
 
-from revolve2.modular_robot.body import AttachmentPoint, Module
-from revolve2.modular_robot.body.v2 import ActiveHingeV2, BodyV2, BrickV2
+from revolve2.modular_robot.revolve2.modular_robot.body import AttachmentPoint, Module
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import ActiveHingeV2, BodyV2, BrickV2
 
 
 def rotate(a: Vector3, b: Vector3, rotation: Quaternion) -> Vector3:

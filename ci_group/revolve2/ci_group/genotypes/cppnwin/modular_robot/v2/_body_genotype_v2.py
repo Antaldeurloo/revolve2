@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-
+import random
 import multineat
 import numpy as np
 from typing_extensions import Self
@@ -96,17 +96,15 @@ class BodyGenotypeV2:
         :returns: A newly created genotype.
         """
         multineat_rng = multineat_rng_from_random(rng)
-
-        return BodyGenotypeV2(
-            MultineatGenotypePickleWrapper(
-                parent1.body.genotype.MateWithConstraints(
+        unpickled_genotype = parent1.body.genotype.MateWithConstraints(
                     parent2.body.genotype,
                     False,
                     False,
                     multineat_rng,
                     cls._MULTINEAT_PARAMS,
                 )
-            )
+        print(unpickled_genotype)
+        return BodyGenotypeV2(unpickled_genotype
         )
 
     def develop_body(self) -> BodyV2:
@@ -115,4 +113,4 @@ class BodyGenotypeV2:
 
         :returns: The created robot.
         """
-        return develop(self.body.genotype, )
+        return develop(self.body.genotype, 23423423, True, True, True, False, 18, False, True, True, True, False)

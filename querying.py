@@ -1,0 +1,51 @@
+import sqlite3
+import pandas as pd
+#from ci_group.revolve2.ci_group.genotypes.cppnwin._body_genotype_v2_multineat_genotype_pickle_wrapper import MultineatGenotypePickleWrapper
+
+# Connect to the SQLite database
+conn = sqlite3.connect('testfile.sqlite')
+cursor = conn.cursor()
+
+# Run a query
+query = """
+    
+    
+    SELECT genotype, genotype_id, g.id, fitness, serialized_body, serialized_brain  FROM individual i
+    
+    inner join genotype g on g.id = i.genotype_id
+    order by fitness desc
+    limit 10
+
+;"""  # Replace with your actual table name
+
+query2 = """
+
+    select * from experiment e
+    join generation g on e.id = g.experiment_id
+    join population p on p.id = g.population_id
+    join individual i on i.population_id = p.id
+    join genotype ge on ge.id = i.genotype_id
+    limit 10
+
+"""
+
+query3 = """
+
+    select * from genotype
+
+"""
+
+cursor.execute(query3)
+
+# Fetch all rows and column names
+rows = cursor.fetchall()
+columns = [description[0] for description in cursor.description]
+print(rows[0])
+# Convert the results to a DataFrame
+df = pd.DataFrame(rows, columns=columns)
+print("Data from the table:")
+print(df)
+print(df.columns)
+
+# Close the connection
+conn.close()

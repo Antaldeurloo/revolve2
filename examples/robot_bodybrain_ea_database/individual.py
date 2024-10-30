@@ -12,7 +12,7 @@ elif os.environ["ALGORITHM"] in ["GRN", "GRN_system", "GRN_system_adv"]:
 else:
     raise ValueError("ALGORITHM must be either GRN or CPPN")
 
-from revolve2.experimentation.optimization.ea import Individual as GenericIndividual
+from revolve2.experimentation.revolve2.experimentation.optimization.ea import Individual as GenericIndividual
 
 
 @dataclass

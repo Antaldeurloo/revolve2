@@ -36,7 +36,7 @@ def select_parents(
                 population=[individual.genotype for individual in population],
                 fitnesses=[individual.fitness for individual in population],
                 selection_function=lambda _, fitnesses: selection.tournament(
-                    rng=rng, fitnesses=fitnesses, k=1
+                    rng=rng, fitnesses=fitnesses, k=1, random=False
                 ),
             )
             for _ in range(offspring_size)
@@ -67,7 +67,7 @@ def select_survivors(
             population=genotypes,
             fitnesses=fitnesses,
             selection_function=lambda _, fitnesses: selection.tournament(
-                rng=rng, fitnesses=fitnesses, k=2
+                rng=rng, fitnesses=fitnesses, k=2, random=False
             ),
         ),
     )
@@ -97,10 +97,8 @@ def find_best_robot(
     :param population: The population.
     :returns: The best individual.
     """
-    return max(
-        population + [] if current_best is None else [current_best],
-        key=lambda x: x.fitness,
-    )
+    best_robot = max(population, key=lambda ind: ind.fitness)
+    return best_robot
 
 
 def main() -> None:
@@ -133,7 +131,6 @@ def main() -> None:
 
     # Evaluate the initial population.
     logging.info("Evaluating initial population.")
-    print(initial_genotypes[0])
     initial_fitnesses = evaluator.evaluate(
         [genotype.develop() for genotype in initial_genotypes]
     )
@@ -171,6 +168,7 @@ def main() -> None:
             [genotype.develop() for genotype in offspring_genotypes]
         )
 
+
         # Make an intermediate offspring population.
         offspring_population = [
             Individual(genotype, fitness)
@@ -183,11 +181,17 @@ def main() -> None:
             population,
             offspring_population,
         )
-
+        pop_fit = []
+        for ind in population:
+            pop_fit.append(ind.fitness)
+        print(sum(pop_fit)/len(pop_fit))
+        print(max(pop_fit))
         # Find the new best robot
         best_robot = find_best_robot(best_robot, population)
 
-        logging.info(f"Best robot until now: {best_robot.fitness}")
+        logging.info(f"Best robot now: {best_robot.fitness}")
+        logging.info(f"Other robot: {population[1].fitness}")
+
         logging.info(f"Genotype pickle: {pickle.dumps(best_robot)!r}")
 
         # Increase the generation index counter.

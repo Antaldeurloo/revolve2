@@ -4,11 +4,11 @@ from itertools import product
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
-from revolve2.modular_robot.body import Module
-from revolve2.modular_robot.body.base import ActiveHinge, Body, Brick
-from revolve2.modular_robot.body.v2 import ActiveHingeV2, BrickV2
-from revolve2.modular_robot.body.base._core import Core
-from revolve2.modular_robot.body.v2._attachment_face_core_v2 import AttachmentFaceCoreV2
+from revolve2.modular_robot.revolve2.modular_robot.body import Module
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHinge, Body, Brick
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import ActiveHingeV2, BrickV2
+from revolve2.modular_robot.revolve2.modular_robot.body.base._core import Core
+from revolve2.modular_robot.revolve2.modular_robot.body.v2._attachment_face_core_v2 import AttachmentFaceCoreV2
 from typing import Generic, TypeVar, Union
 
 # Type variable

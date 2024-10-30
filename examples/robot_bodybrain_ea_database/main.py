@@ -41,10 +41,10 @@ import multineat
 import numpy as np
 import numpy.typing as npt
 from population import Population
-from revolve2.experimentation.database import OpenMethod, open_database_sqlite
-from revolve2.experimentation.logging import setup_logging
-from revolve2.experimentation.optimization.ea import population_management, selection
-from revolve2.experimentation.rng import make_rng, seed_from_time
+from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.optimization.ea import population_management, selection
+from revolve2.experimentation.revolve2.experimentation.rng import make_rng, seed_from_time
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -107,7 +107,7 @@ def select_survivors(
         A newly created population.
     """
 
-    original_survivors, offspring_survivors, idx4selection = population_management.steady_state(
+    original_survivors, offspring_survivors = population_management.steady_state(
         [i.genotype for i in original_population.individuals],
         [i.fitness for i in original_population.individuals],
         [i.genotype for i in offspring_population.individuals],
@@ -201,7 +201,7 @@ def select_survivors(
             )
             for i in offspring_survivors
         ]
-    ), idx4selection
+    )
 
 
 def find_best_robot(
@@ -511,7 +511,7 @@ def run_experiment(dbengine: Engine, iexp: int) -> None:
         )
 
         # Create the next population by selecting survivors
-        population, idx4selection = select_survivors(
+        population = select_survivors(
             rng,
             population,
             offspring_population, config.SURVIVOR_TOURNAMENT_SIZE, random = random_search
@@ -541,7 +541,7 @@ def main() -> None:
     if os.environ["elaborate"] == "False":
         # Only if it does not already exists.
         dbengine = open_database_sqlite(
-            config.DATABASE_FILE, open_method=OpenMethod.NOT_EXISTS_AND_CREATE
+            config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
         )
         # Create the structure of the database.
         Base.metadata.create_all(dbengine)

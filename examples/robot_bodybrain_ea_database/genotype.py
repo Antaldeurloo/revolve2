@@ -6,11 +6,11 @@ import multineat
 import numpy as np
 from base import Base
 
-from revolve2.ci_group.genotypes.cppnwin.modular_robot import BrainGenotypeCpgOrm
-from revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2
-from revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyMappingSeedOrmV2
-from revolve2.experimentation.database import HasId
-from revolve2.modular_robot import ModularRobot
+from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot import BrainGenotypeCpgOrm
+from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2
+from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyMappingSeedOrmV2
+from revolve2.experimentation.revolve2.experimentation.database import HasId
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
 
 class Genotype(Base, HasId, BodyGenotypeOrmV2, BrainGenotypeCpgOrm, BodyMappingSeedOrmV2):
     """SQLAlchemy model for a genotype for a modular robot body and brain."""

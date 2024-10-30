@@ -22,8 +22,10 @@ def main() -> None:
 
     # Create the robot.
     body = modular_robots_v2.gecko_v2()
+    print(body)
 
     brain = BrainCpgNetworkNeighborRandom(body=body, rng=rng)
+    print(brain)
     robot = ModularRobot(body, brain)
 
     # Create the scene.
@@ -32,7 +34,7 @@ def main() -> None:
 
     # Create the simulator.
     # We set enable the headless flag, which will prevent visualization of the simulation, speeding it up.
-    simulator = LocalSimulator(headless=True)
+    simulator = LocalSimulator(headless=False)
     batch_parameters = make_standard_batch_parameters()
 
     # Obtain the state of the simulation, measured at a predefined interval as defined in the batch parameters.

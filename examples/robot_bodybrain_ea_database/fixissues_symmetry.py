@@ -3,10 +3,10 @@ from develop_from_string import get_body
 from itertools import product
 import numpy as np
 import pandas as pd
-from revolve2.modular_robot.body.v2 import ActiveHingeV2, BrickV2
-from revolve2.modular_robot.body.base import ActiveHinge, Body, Brick
-from revolve2.modular_robot.body.base._core import Core
-from revolve2.modular_robot.body.v2._attachment_face_core_v2 import AttachmentFaceCoreV2
+from revolve2.modular_robot.revolve2.modular_robot.body.v2 import ActiveHingeV2, BrickV2
+from revolve2.modular_robot.revolve2.modular_robot.body.base import ActiveHinge, Body, Brick
+from revolve2.modular_robot.revolve2.modular_robot.body.base._core import Core
+from revolve2.modular_robot.revolve2.modular_robot.body.v2._attachment_face_core_v2 import AttachmentFaceCoreV2
 import sys
 
 

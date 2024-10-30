@@ -3,7 +3,7 @@
 from base import Base
 from individual import Individual
 
-from revolve2.experimentation.optimization.ea import Population as GenericPopulation
+from revolve2.experimentation.revolve2.experimentation.optimization.ea import Population as GenericPopulation
 
 
 class Population(Base, GenericPopulation[Individual], kw_only=True):

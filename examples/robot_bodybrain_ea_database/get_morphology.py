@@ -42,8 +42,8 @@ from population import Population
 from sqlalchemy.orm import Session
 from sqlalchemy import select, and_
 
-from revolve2.experimentation.database import OpenMethod, open_database_sqlite
-from revolve2.experimentation.logging import setup_logging
+from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
+from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
 
 def select_data(dbengine, experiment_id, min_population_id, max_population_id) -> pd.DataFrame:
     """Goal:

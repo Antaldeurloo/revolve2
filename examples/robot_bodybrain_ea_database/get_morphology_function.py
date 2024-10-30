@@ -1,7 +1,7 @@
 
 import numpy as np
 #import os
-from revolve2.ci_group.morphological_measures import MorphologicalMeasures
+from revolve2.ci_group.revolve2.ci_group.morphological_measures import MorphologicalMeasures
 from develop_from_string import get_body
 from extract_string import extract_string
 

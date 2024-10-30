@@ -7,16 +7,16 @@ import numpy as np
 import os
 from base import Base
 
-from revolve2.ci_group.genotypes.cppnwin.modular_robot import BrainGenotypeCpgOrm
+from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot import BrainGenotypeCpgOrm
 if os.environ["ALGORITHM"] == "GRN":
-    from revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2GRN
+    from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2GRN
 elif os.environ["ALGORITHM"] in ["GRN_system"]:
-    from revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2GRN_system as BodyGenotypeOrmV2GRN
+    from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2GRN_system as BodyGenotypeOrmV2GRN
 elif os.environ["ALGORITHM"] in ["GRN_system_adv"]:
-    from revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2GRN_system_adv as BodyGenotypeOrmV2GRN
+    from revolve2.ci_group.revolve2.ci_group.genotypes.cppnwin.modular_robot.v2 import BodyGenotypeOrmV2GRN_system_adv as BodyGenotypeOrmV2GRN
     
-from revolve2.experimentation.database import HasId
-from revolve2.modular_robot import ModularRobot
+from revolve2.experimentation.revolve2.experimentation.database import HasId
+from revolve2.modular_robot.revolve2.modular_robot import ModularRobot
 
 class Genotype(Base, HasId, BodyGenotypeOrmV2GRN, BrainGenotypeCpgOrm):
     """SQLAlchemy model for a genotype for a modular robot body and brain."""

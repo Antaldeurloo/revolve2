@@ -2,7 +2,7 @@ import json
 import numpy as np
 import os
 import pandas as pd
-from revolve2.ci_group.morphological_measures import MorphologicalMeasures
+from revolve2.ci_group.revolve2.ci_group.morphological_measures import MorphologicalMeasures
 from develop_from_string import get_body
 
 def main_morph(path2file, max_parts, destination_path):

@@ -39,6 +39,7 @@ def open_database_sqlite(
 def __common(db_file: str, open_method: OpenMethod = OpenMethod.OPEN_IF_EXISTS) -> None:
     exists = os.path.exists(db_file)
     print(os.path)
+    print('idididididi')
     if open_method == OpenMethod.OPEN_IF_EXISTS:
         if not exists:
             raise RuntimeError(

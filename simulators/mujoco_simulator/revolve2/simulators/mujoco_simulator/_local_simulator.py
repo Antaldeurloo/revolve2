@@ -6,11 +6,7 @@ from revolve2.simulation.revolve2.simulation.simulator import Batch, Simulator
 
 from ._simulate_manual_scene import simulate_manual_scene
 
-if os.environ.get("RERUN", False):
-
-    from ._simulate_scene_rerun import simulate_scene
-else:
-    from ._simulate_scene import simulate_scene
+from ._simulate_scene import simulate_scene
 
 
 class LocalSimulator(Simulator):
@@ -57,6 +53,7 @@ class LocalSimulator(Simulator):
         self._fast_sim = fast_sim
         self._manual_control = manual_control
 
+
     def simulate_batch(self, batch: Batch) -> list[list[SimulationState]]:
         """
         Simulate the provided batch by simulating each contained scene.
@@ -76,7 +73,6 @@ class LocalSimulator(Simulator):
 
         if (batch.record_settings is not None) and (os.environ["WRITEVIDEOS"] == "True"):
             os.makedirs(batch.record_settings.video_directory, exist_ok=False)
-
         if self._manual_control:
             if self._headless:
                 raise Exception("Manual control only works with rendered simulations.")
@@ -85,6 +81,7 @@ class LocalSimulator(Simulator):
             return [[]]
 
         if self._num_simulators > 1:
+
             with concurrent.futures.ProcessPoolExecutor(
                 max_workers=self._num_simulators
             ) as executor:
@@ -107,6 +104,19 @@ class LocalSimulator(Simulator):
                 ]
                 results = [future.result() for future in futures]
         else:
+
+            print(
+
+                    self._headless,
+                    batch.record_settings,
+                    self._start_paused,
+                    control_step,
+                    sample_step,
+                    batch.parameters.simulation_time,
+                    batch.parameters.simulation_timestep,
+                    self._cast_shadows,
+                    self._fast_sim,)
+
             results = [
                 simulate_scene(
                     scene_index,

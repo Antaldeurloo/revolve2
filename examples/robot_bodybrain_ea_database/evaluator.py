@@ -50,10 +50,9 @@ class Evaluator:
             else:
                 raise ValueError("headless must be either True or False")
         # Initialize the simulator.
-        print(headless)
-        print(type(headless))
+
         self._simulator = LocalSimulator(
-            headless=False, num_simulators=num_simulators
+            headless=headless, num_simulators=num_simulators
         )
         # ---- Set the simulation parameters.
         self.simulation_time = simulation_time

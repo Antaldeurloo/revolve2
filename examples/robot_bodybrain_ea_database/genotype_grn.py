@@ -30,7 +30,7 @@ class Genotype(Base, HasId, BodyGenotypeOrmV2GRN, BrainGenotypeCpgOrm):
         rng: np.random.Generator, include_bias: bool,
     ) -> Genotype:
         """
-        Goal:
+        Goal:  
             Create a random genotype.
         -------------------------------------------------------------------------------------------
         Input:
@@ -111,7 +111,6 @@ class Genotype(Base, HasId, BodyGenotypeOrmV2GRN, BrainGenotypeCpgOrm):
         else:
             # Perform crossover for body (not brain in case of GRN --> CPPN not desired to have crossover)
             body = cls.crossover_body(parent1, parent2, rng)
-
             return Genotype(body=body.body, brain = parent1.brain)
 
     def develop(self, include_bias, max_parts, mode_core_mult) -> ModularRobot:

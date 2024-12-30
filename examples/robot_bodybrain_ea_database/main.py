@@ -1,6 +1,7 @@
 import logging
 import sys
 import os
+import pickle
 # Set algorithm, mode and file name from command line arguments.
 algo = sys.argv[1]
 mode = sys.argv[2]
@@ -219,7 +220,7 @@ def find_best_robot(
         The best individual.
     """
     return max(
-        population + [] if current_best is None else [current_best],
+        [ind for ind in population.individuals],
         key=lambda x: x.fitness,
     )
 
@@ -234,7 +235,7 @@ def develop_robots(offspring_genotypes: list[Genotype]):
         The developed robots.
     """
     if os.environ["ALGORITHM"] in ["GRN", "GRN_system", "GRN_system_adv"]:
-        if config.NUM_SIMULATORS != 1:
+        if 1 == 1:
             with concurrent.futures.ProcessPoolExecutor(max_workers = config.NUM_SIMULATORS
                     ) as executor:
                         futures = [
@@ -246,7 +247,7 @@ def develop_robots(offspring_genotypes: list[Genotype]):
         else:
             robots = [genotype.develop(config.CPPNBIAS, config.MAX_PARTS, config.MODE_CORE_MULT) for genotype in offspring_genotypes]
     elif os.environ["ALGORITHM"] == "CPPN":
-        if config.NUM_SIMULATORS != 1:
+        if 1 == 1:
             with concurrent.futures.ProcessPoolExecutor(max_workers = config.NUM_SIMULATORS
                     ) as executor:
                         futures = [
@@ -397,6 +398,7 @@ def run_experiment(dbengine: Engine, iexp: int) -> None:
             experiment=experiment, generation_index=0, population=population,
             innov_db_body = innov_db_body.Serialize(), innov_db_brain = innov_db_brain.Serialize()
         )
+
         logging.info("Saving generation.")
         #with Session(dbengine, expire_on_commit=False) as session:
         session.add(generation)
@@ -523,6 +525,8 @@ def run_experiment(dbengine: Engine, iexp: int) -> None:
             generation_index=generation.generation_index + 2,
             population=population, innov_db_body = innov_db_body.Serialize(), innov_db_brain = innov_db_brain.Serialize()
         )
+        best_robot = find_best_robot(current_best=None, population=population)
+        print(best_robot.fitness)
 
         logging.info("Saving offspring and population.")
         session.add(generation1)
@@ -541,18 +545,18 @@ def main() -> None:
     if os.environ["elaborate"] == "False":
         # Only if it does not already exists.
         dbengine = open_database_sqlite(
-            config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
+            config.DATABASE_FILE, open_method=OpenMethod.OPEN_OR_CREATE
         )
         # Create the structure of the database.
         Base.metadata.create_all(dbengine)
     elif os.environ["elaborate"] == "True":
             dbengine = open_database_sqlite(
-        config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
-    )
-
+        config.DATABASE_FILE, open_method=OpenMethod.OPEN_OR_CREATE
+        )
     # Run the experiment several times.
     if os.environ["elaborate"] == "False":
         for iexp in range(config.NUM_REPETITIONS):
+            logging.info('Experiment index: ' + str(iexp))
             run_experiment(dbengine, iexp)
     elif os.environ["elaborate"] == "True":
         with Session(dbengine) as ses:

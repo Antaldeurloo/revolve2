@@ -165,6 +165,7 @@ class DevelopGRN():
 
             # --- Add to matrices
             self.matrices["TF" + str(tf + 1)] = [A, B, b, decay, x]
+
             
     def add2concentrations(self, indices, TF, amount):
         """Goal:
@@ -356,13 +357,17 @@ class DevelopGRN():
             Create genes from the genotype."""
         # Initialize nucleotide index
         nucleotide_idx = 0
-
+        #self.genotype = [0.5725732843577864,0.6646651017665862,0.550558058321476,0.5535269796848297,0.6043629667907954,0.37288902074098584,0.5954864632338286,0.56,0.51,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.73,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.69,0.43,0.29,0.63,0.77,0.87,0.16,0.1,0.07,0.31,0.98,0.14,0.02,0.75,0.95,0.95,0.91,1.0,0.74,0.51,0.44,0.61,0.81,0.68,0.9,0.92,0.78,0.8,0.46,0.98,0.12,0.14,0.21,0.83,0.5,0.79,0.57,0.97,0.39,0.55,0.84,0.48,0.21,0.28,0.16,0.9,0.41,0.61,0.58,0.2,0.03,0.89,0.41,0.19,0.12,0.31,0.73,0.92,0.34,0.61,0.17,0.96,0.51,0.98,0.02,0.02,0.29,0.68,0.96,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.4,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.48,0.78,0.39,0.37,0.65,0.79,0.68,0.58,0.15,0.82,0.76,0.31,0.36,0.56,0.51,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.69,0.43,0.29,0.63,0.77,0.87,0.16,0.1,0.07,0.31,0.98,0.14,0.02,0.75,0.95,0.95,0.91,1.0,0.74,0.51,0.44,0.61,0.81,0.68,0.9,0.92,0.78,0.8,0.46,0.98,0.12,0.14,0.21,0.83,0.5,0.79,0.57,0.97,0.39,0.55,0.84,0.48,0.21,0.28,0.16,0.9,0.41,0.61,0.58,0.2,0.03,0.89,0.41,0.19,0.12,0.31,0.73,0.92,0.34,0.61,0.17,0.96,0.51,0.98,0.02,0.02,0.29,0.68,0.96,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.4,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.48,0.78,0.39,0.37,0.65,0.79,0.68,0.58,0.15,0.82,0.76,0.31,0.36,0.56,0.84,0.01,0.53,0.85,0.41,0.4,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32]
+        #self.genotype = self.genotype[7:]
+        #print(self.genotype)
         # Repeat as long as index is smaller than gene length
         while nucleotide_idx < len(self.genotype):
             # If the associated value is smaller than the promoter threshold
+            #print(self.genotype[nucleotide_idx])
             if self.genotype[nucleotide_idx] < self.promoter_threshold:
                 # If there are nucleotypes enough to compose a gene
                 if (len(self.genotype) - 1 - nucleotide_idx) >= self.types_nucleotypes:
+                    
                     # Get regulatory transcription factor(s)
                     regulatory_transcription_factor = self.genotype[nucleotide_idx + self.regulatory_transcription_factor_idx + 1] # Which regulatory tf is expressed?
                     regulatory_min = np.float64(self.genotype[nucleotide_idx + self.regulatory_min_idx + 1]) # Between those two values regulatory tf expresses gene
@@ -401,7 +406,10 @@ class DevelopGRN():
                     max_rTF = max([regulatory_min, regulatory_max])
                     gene = [regulatory_transcription_factor_label, min_rTF, max_rTF,
                                 transcription_factor_label, float(transcription_factor_amount), int(diffusion_site_label)]
-
+        #            print('\n')
+         #           print([regulatory_transcription_factor, regulatory_min, regulatory_max, transcription_factor,transcription_factor_amount, diffusion_site])
+          #          print(gene)
+           #         print('\n')
                     # Append gene to promoters
                     self.promotors.append(gene)
 
@@ -410,8 +418,8 @@ class DevelopGRN():
             
             # Increase nucleotide index
             nucleotide_idx += 1
-        
-        # Convert to numpy
+        #print(self.promotors)
+
         self.promotors_numpy = np.array(self.promotors)
 
         return self
@@ -487,6 +495,7 @@ class DevelopGRN():
             cell_type: object"""
     
         # ---- For all promotors set the production
+        expressed = 0
         for promotor in self.promotors:
             # ---- Initialize variables that are used multiple times
             rTF = promotor[self.regulatory_transcription_factor_idx] # Regulatory transcription factor
@@ -502,6 +511,7 @@ class DevelopGRN():
                 # --- Increase amount of transcription factor by setting the production
                 # Check if between rTF min and rTF max --> set production at diffusion site by amount x
                 if (summed_regulatory >= promotor[self.regulatory_min_idx]) and (summed_regulatory <= promotor[self.regulatory_max_idx]):
+                    expressed +=1
                     # To adhere to the original code, we update the deepcopied cell's transcription factors
                     if TF in new_cell.transcription_factors.keys():
                         new_cell.transcription_factors[TF][ds] += amount
@@ -511,7 +521,6 @@ class DevelopGRN():
 
                     # Add to concentration
                     self.add2concentrations(new_cell.indices, TF, amount)
-
         return new_cell
     
     def place_head(self, new_cell):
@@ -561,6 +570,7 @@ class DevelopGRN():
             Grows the embryo."""
         # For all development steps
         for _ in range(0, self.dev_steps):
+
             # ---- Current number of cells
             ncells = len(self.cells)
 
@@ -596,6 +606,7 @@ class DevelopGRN():
             # ---- Express promoters of new cells and set production for next loop
             for icell, cell in enumerate(self.cells):
                 # Express promoters of new cell and updates transcription factors
+
                 if icell >= ncells:
                     self.express_promoters(cell, type(cell.developed_module.module))
                 # Get increase for next loop
@@ -603,6 +614,7 @@ class DevelopGRN():
                     self.set_increase(cell, TF)
             # ---- Early stop?
             if self.quantity_modules >= self.max_modules:
+                print('max modules')
                 break
             
         return self

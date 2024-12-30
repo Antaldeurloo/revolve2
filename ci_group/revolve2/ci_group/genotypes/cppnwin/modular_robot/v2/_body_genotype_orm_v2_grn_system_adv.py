@@ -122,6 +122,11 @@ class BodyGenotypeOrmV2GRN_system_adv(orm.MappedAsDataclass, kw_only=True):
             subset = parent[0:cutpoint+types_nucleotypes+1]
             # Append the subset to the new genotype
             new_genotype += subset
+    #    print('\n')
+     #   print('parent1 ' + str(len(genotype1)))
+      #  print('parent2 ' + str(len(genotype2)))
+       # print('child ' + str(len(new_genotype)))
+        #print('\n')
 
         return BodyGenotypeOrmV2GRN_system_adv(body = new_genotype)
     

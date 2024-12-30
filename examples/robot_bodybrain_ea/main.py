@@ -143,6 +143,7 @@ def main() -> None:
 
     # Save the best robot
     best_robot = find_best_robot(None, population)
+    print(best_robot.genotype)
 
     # Set the current generation to 0.
     generation_index = 0

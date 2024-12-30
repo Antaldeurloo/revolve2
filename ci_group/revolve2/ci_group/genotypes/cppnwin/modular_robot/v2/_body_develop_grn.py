@@ -327,6 +327,7 @@ class DevelopGRN():
             Grows the embryo."""
         # For all development steps
         for t in range(0, self.dev_steps):
+
             # Develops cells in order of age --> oldest first
             for idxc in range(0, len(self.cells)):
                 cell = self.cells[idxc]

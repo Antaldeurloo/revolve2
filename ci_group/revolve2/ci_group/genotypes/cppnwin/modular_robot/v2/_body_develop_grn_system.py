@@ -38,6 +38,7 @@ class ModuleGRN:
     attachment_points: dict
 
 
+
 class DevelopGRN():
     """Goal:
         Class to develop a GRN.
@@ -360,7 +361,7 @@ class DevelopGRN():
         # Store concentrations
         if self.store_gradients == True:
             # Save locations
-            print(self.store_location)
+
             np.savetxt('locations.csv', self.store_location, delimiter = ',')
             # Save concentrations
             for TF in self.matrices.keys():
@@ -386,6 +387,7 @@ class DevelopGRN():
             Create genes from the genotype."""
         # Initialize nucleotide index
         nucleotide_idx = 0
+
 
         # Repeat as long as index is smaller than gene length
         while nucleotide_idx < len(self.genotype):
@@ -431,7 +433,7 @@ class DevelopGRN():
                     max_rTF = max([regulatory_min, regulatory_max])
                     gene = [regulatory_transcription_factor_label, min_rTF, max_rTF,
                                 transcription_factor_label, float(transcription_factor_amount), int(diffusion_site_label)]
-
+                    
                     # Append gene to promoters
                     self.promotors.append(gene)
 
@@ -515,7 +517,8 @@ class DevelopGRN():
             self: object
             new_cell: object
             cell_type: object"""
-    
+        #print(len(self.promotors))
+        expressed = 0
         # ---- For all promotors set the production
         for promotor in self.promotors:
             # ---- Initialize variables that are used multiple times
@@ -532,6 +535,7 @@ class DevelopGRN():
                 # --- Increase amount of transcription factor by setting the production
                 # Check if between rTF min and rTF max --> set production at diffusion site by amount x
                 if (summed_regulatory >= promotor[self.regulatory_min_idx]) and (summed_regulatory <= promotor[self.regulatory_max_idx]):
+                    expressed += 1
                     # To adhere to the original code, we update the deepcopied cell's transcription factors
                     if TF in new_cell.transcription_factors.keys():
                         new_cell.transcription_factors[TF][ds] += amount
@@ -541,7 +545,7 @@ class DevelopGRN():
 
                     # Add to concentration
                     self.add2concentrations(new_cell.indices, TF, amount)
-
+        #print('expression ratio 2: ' + str(expressed / len(self.promotors)))
         return new_cell
     
     def place_head(self, new_cell):
@@ -662,6 +666,7 @@ class DevelopGRN():
         # Add product tfs (Brick, Hinge and rotation)
         for tf in range(tds_qt - len(modules_types) - 1, tds_qt):
             product_tfs.append(f'TF{tf+1}')
+
 
         # Get concentrations of those tfs
         concentration1 = sum(cell.transcription_factors[product_tfs[0]]) \

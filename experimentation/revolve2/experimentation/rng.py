@@ -17,7 +17,7 @@ def seed_from_time(log_seed: bool = True) -> int:
     seed = int(datetime.now().timestamp() * 1e6)
     if log_seed:
         logging.info(f"Rng seed: {seed}")
-    print(seed)
+
     return seed
 
 

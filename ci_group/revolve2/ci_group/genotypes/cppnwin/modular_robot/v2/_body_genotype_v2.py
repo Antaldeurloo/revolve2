@@ -103,7 +103,7 @@ class BodyGenotypeV2:
                     multineat_rng,
                     cls._MULTINEAT_PARAMS,
                 )
-        print(unpickled_genotype)
+
         return BodyGenotypeV2(unpickled_genotype
         )
 

@@ -62,15 +62,8 @@ from genotype_grn import Genotype
 import config
 
 
+def process_database(db_path):
 
-
-
-
-def main() -> None:
-    """Perform the rerun."""
-    setup_logging()
-
-    # Load the best individual from the database.
     dbengine = open_database_sqlite(
         config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
     )
@@ -85,7 +78,8 @@ def main() -> None:
             .join_from(Generation, Population, Generation.population_id == Population.id)
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-            .where(Experiment.id == 10)
+            .group_by(Generation.id)
+            #.where(Experiment.id < 3)
             .order_by(Individual.fitness.desc())
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [
@@ -103,6 +97,20 @@ def main() -> None:
     for genotype, fitness, energy_used, efficiency, x_distance, y_distance, experiment_id, generation_index, body_id in rows
     ]
     df = pd.DataFrame(data)
+    return df
+
+
+def main() -> None:
+    """Perform the rerun."""
+    setup_logging()
+
+    # Load the best individual from the database.
+    
+    all_data = pd.DataFrame()
+    db_paths = ['adv_30_vertical_10runs_2.sqlite', 'adv_30_vertical_10runs_last2.sqlite', 'adv_30_vertical_10runs.sqlite', 'adv_vertical_30.sqlite']
+    for db_path in db_paths:
+        df = process_database(db_path)
+        all_data = pd.concat([all_data, df], ignore_index=True)
     #print(df.genotype[0])
     evaluator = Evaluator(
         headless = False, num_simulators = 1,
@@ -118,16 +126,16 @@ def main() -> None:
     #print(fitness)
     #print(df)
     # Extract the length of the 'body' values
-    df['body_length'] = df['genotype'].apply(lambda x: len(x.body))
-    df = df[df['generation_index'] % 2 == 0]
+    all_data['body_length'] = all_data['genotype'].apply(lambda x: len(x.body))
+    all_data = all_data[all_data['generation_index'] % 2 == 0]
 
 # Group by 'generation' and compute the average length
-    result = df.groupby('generation_index').agg(
+    result = all_data.groupby('generation_index').agg(
     avg_body_length=('body_length', 'mean'),
     avg_fitness=('fitness', 'mean')
     ).reset_index()
 
-    result['max_fitness'] = df.groupby('generation_index')['fitness'].max().reset_index(drop=True)
+    result['max_fitness'] = all_data.groupby('generation_index')['fitness'].max().reset_index(drop=True)
 
 # Line graph
     fig, ax1 = plt.subplots(figsize=(10, 6))

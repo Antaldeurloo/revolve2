@@ -3,7 +3,7 @@ import pandas as pd
 #from ci_group.revolve2.ci_group.genotypes.cppnwin._body_genotype_v2_multineat_genotype_pickle_wrapper import MultineatGenotypePickleWrapper
 
 # Connect to the SQLite database
-conn = sqlite3.connect('adv_30_vertical_nocross_10runs.sqlite')
+conn = sqlite3.connect('controlled_cross_9more.sqlite')
 cursor = conn.cursor()
 
 # Run a query

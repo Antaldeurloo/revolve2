@@ -448,14 +448,20 @@ def run_experiment(dbengine: Engine, iexp: int) -> None:
                 for parent1_i, parent2_i in parents
             ]
         elif os.environ["ALGORITHM"] in ["GRN", "GRN_system", "GRN_system_adv"]:
-            offspring_genotypes = [
-                Genotype.crossover(
-                    population.individuals[parent1_i].genotype,
-                    population.individuals[parent2_i].genotype,
-                    rng, config.CROSSOVER_PROBABILITY	
-                ).mutate(innov_db_brain, rng, config.MUTATION_PROBABILITY)
-                for parent1_i, parent2_i in parents
-            ]
+            offspring_genotypes = []
+            for parent1_i, parent2_i in parents:
+                if population.individuals[parent1_i].fitness > population.individuals[parent2_i].fitness:
+                    offspring_genotypes.append(Genotype.crossover(
+                        population.individuals[parent1_i].genotype,
+                        population.individuals[parent2_i].genotype,
+                        rng, config.CROSSOVER_PROBABILITY	
+                    ).mutate(innov_db_brain, rng, config.MUTATION_PROBABILITY))
+                else:
+                    offspring_genotypes.append(Genotype.crossover(
+                        population.individuals[parent2_i].genotype,
+                        population.individuals[parent1_i].genotype,
+                        rng, config.CROSSOVER_PROBABILITY	
+                    ).mutate(innov_db_brain, rng, config.MUTATION_PROBABILITY))
         else:
             raise ValueError("ALGORITHM must be either GRN or CPPN")
         # Evaluate the offspring.

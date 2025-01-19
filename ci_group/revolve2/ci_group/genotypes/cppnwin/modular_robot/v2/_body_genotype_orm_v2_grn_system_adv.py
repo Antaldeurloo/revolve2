@@ -103,25 +103,51 @@ class BodyGenotypeOrmV2GRN_system_adv(orm.MappedAsDataclass, kw_only=True):
         p2 = genotype2[7:]
 
         # Get new genotype
-        for parent in [p1, p2]:
-            # Initialize nucleotide index and promotor sites
-            nucleotide_idx = 0
-            promotor_sites = []
-            while nucleotide_idx < len(parent):
-                # If the nucleotide value is less than the promoter threshold
-                if parent[nucleotide_idx] < promoter_threshold:
-                    # If there are nucleotides enough to compose a gene
-                    if (len(parent) - 1 - nucleotide_idx) >= types_nucleotypes:
-                        promotor_sites.append(nucleotide_idx)
-                        nucleotide_idx += types_nucleotypes
-                nucleotide_idx += 1
 
-            # Sample a promotor site
-            cutpoint = rng.choice(promotor_sites, 1)[0]
-            # Get a subset of the parent genotype
-            subset = parent[0:cutpoint+types_nucleotypes+1]
-            # Append the subset to the new genotype
-            new_genotype += subset
+        # Initialize nucleotide index and promotor sites
+        nucleotide_idx = 0
+        promotor_sites1 = []
+        while nucleotide_idx < len(p1):
+            # If the nucleotide value is less than the promoter threshold
+            if p1[nucleotide_idx] < promoter_threshold:
+                # If there are nucleotides enough to compose a gene
+                if (len(p1) - 1 - nucleotide_idx) >= types_nucleotypes:
+                    promotor_sites1.append(nucleotide_idx)
+                    nucleotide_idx += types_nucleotypes
+            nucleotide_idx += 1
+        nucleotide_idx = 0
+        promotor_sites2 = []
+        while nucleotide_idx < len(p2):
+            # If the nucleotide value is less than the promoter threshold
+            if p2[nucleotide_idx] < promoter_threshold:
+                # If there are nucleotides enough to compose a gene
+                if (len(p2) - 1 - nucleotide_idx) >= types_nucleotypes:
+                    promotor_sites2.append(nucleotide_idx)
+                    nucleotide_idx += types_nucleotypes
+            nucleotide_idx += 1
+        # Sample a promotor site
+        #print('starting test')
+        cutpoint1 = rng.choice(promotor_sites1, 1)[0]
+        #print('cutpoint1: ' + str(cutpoint1))
+        #print(promotor_sites1) 
+        cutpoint_ratio = cutpoint1 / len(p1) 
+        #print('cutpoint ratio: '+str(cutpoint_ratio))
+        if cutpoint_ratio < 0.5:
+            cutpoint1 = min(promotor_sites1, key=lambda x: abs(x - ((1 - cutpoint_ratio) * len(p1))))
+        #print('cutpoint revised: ' + str(cutpoint1))
+        cutpoint2_rough = (1 - (cutpoint1 / len(p1))) * len(p2)
+        # Get a subset of the parent genotype
+        subset1 = p1[0:cutpoint1+types_nucleotypes+1]
+        # Append the subset to the new genotype
+
+
+        cutpoint2 = min(promotor_sites2, key=lambda x: abs(x - cutpoint2_rough))
+        #print('p2:'+ str(promotor_sites2))
+        #print('cutpoint2: '+str(cutpoint2))
+        #print('lenght 2:'+ str(len(p2)))
+        subset2 = p2[0:cutpoint2+types_nucleotypes+1]
+
+        new_genotype += subset1 + subset2
     #    print('\n')
      #   print('parent1 ' + str(len(genotype1)))
       #  print('parent2 ' + str(len(genotype2)))

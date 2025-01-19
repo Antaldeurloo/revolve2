@@ -3,7 +3,7 @@ import os
 
 DATABASE_FILE = os.environ["DATABASE_FILE"]
 NUM_REPETITIONS = 10 #20#5
-NUM_SIMULATORS = os.cpu_count()
+NUM_SIMULATORS = 1
 POPULATION_SIZE = 100
 OFFSPRING_SIZE = 50
 if os.environ["MODE"] == "random search":
@@ -18,7 +18,7 @@ PARENT_TOURNAMENT_SIZE = 4
 SURVIVOR_TOURNAMENT_SIZE = 4
 
 if os.environ["ALGORITHM"] in ["GRN", "GRN_system", "GRN_system_adv"]:
-    CROSSOVER_PROBABILITY = 0
+    CROSSOVER_PROBABILITY = 1
     MUTATION_PROBABILITY = 0.9
 elif os.environ["ALGORITHM"] == "CPPN":
     CROSSOVER_PROBABILITY = 0

@@ -85,7 +85,7 @@ def main() -> None:
             .join_from(Generation, Population, Generation.population_id == Population.id)
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-            .where(Experiment.id == 10)
+            .where(Experiment.id == 1)
             .order_by(Individual.fitness.desc())
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [

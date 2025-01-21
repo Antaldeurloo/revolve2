@@ -121,46 +121,26 @@ def main() -> None:
     all_data = all_data[all_data['generation_index'] % 2 == 0]
     all_data['generation_index'] = all_data['generation_index'].apply(lambda x: x / 2)
 
-    #all_data['max_fitness'] = all_data.groupby(['generation_index', 'experiment_id']).agg(max_fitness=('fitness', 'max')).reset_index()
-    all_data['max_fitness_per_group'] = all_data.groupby(['generation_index', 'experiment_id'])['fitness'].transform('max')
     print(all_data)
-# Group by 'generation' and compute the average length
-    result = all_data.groupby('generation_index').agg(
-    avg_body_length=('body_length', 'mean'),
-    avg_fitness=('fitness', 'mean'),
-    avg_highest_fitness=('max_fitness_per_group','mean'),
-    total_highest_fitness=('max_fitness_per_group','max')
-    ).reset_index()
+    avg_fitness_df = (
+    all_data.groupby(['experiment_id', 'generation_index'])
+    .agg(avg_fitness=('fitness', 'max'))
+    .reset_index()
+    )
+    # Group by experiment_id and generation_index for individual runs
+    for experiment_id, run_data in avg_fitness_df.groupby('experiment_id'):
+        plt.plot(
+            run_data['generation_index'], 
+            run_data['avg_fitness'], 
+            label=f'Run {experiment_id}'
+        )
 
+    # Add labels and legend
+    plt.title("Fitness Trends Across 10 Evolutionary Runs")
+    plt.xlabel("Generation Index")
+    plt.ylabel("Fitness")
 
-
-# Line graph
-    fig, ax1 = plt.subplots(figsize=(10, 6))
-
-# Primary axis for body length
-    ax1.set_xlabel('Generation Index', fontsize=16)
-    ax1.set_ylabel('Genome Length', fontsize=16, color='blue')
-    ax1.plot(result['generation_index'], result['avg_body_length'], linestyle='-', linewidth=2, color='blue', label='Average Genome Length')
-    ax1.tick_params(axis='y', labelcolor='blue', labelsize=14)
-    ax1.tick_params(axis='x', labelsize=14)
-    ax1.grid(True, linestyle='--', alpha=0.6)
-    ax1.set_xlim(left=0)
-# Secondary axis for fitness
-    ax2 = ax1.twinx()
-    ax2.set_ylabel('Fitness', fontsize=16, color='green')
-    ax2.plot(result['generation_index'], result['avg_fitness'], linestyle='-', linewidth=2, color='green', label='Average Fitness')
-    ax2.plot(result['generation_index'], result['avg_highest_fitness'], linestyle='-', linewidth=2, color='orange', label='Average Highest Fitness')
-    ax2.plot(result['generation_index'], result['total_highest_fitness'], linestyle='--', linewidth=2, color='red', label='Total Highest Fitness')  # New line for highest fitness
-    ax2.tick_params(axis='y', labelcolor='green', labelsize=14)
-    if config.DATABASE_FILE != 'adv_30_vertical_nocross_10runs.sqlite':
-        ax1.set_ylim(bottom=0)
-# Add title and legends
-    fig.suptitle('Genome Length and Fitness Metrics of Experiment 2', fontsize=16)
-    lines_1, labels_1 = ax1.get_legend_handles_labels()
-    lines_2, labels_2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower center',fontsize=14)
-    ax2.set_ylim(bottom=0)
-
+    plt.grid()
     plt.show()
 
 

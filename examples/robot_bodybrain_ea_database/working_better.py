@@ -65,34 +65,53 @@ import config
 def process_database(db_path):
 
     dbengine = open_database_sqlite(
-        config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
+        db_path, open_method=OpenMethod.OPEN_IF_EXISTS
     )
+    db_path_to_variable = {
 
-    with Session(dbengine) as ses:
-        rows = ses.execute(
-            select(Genotype, Individual.fitness, Generation.experiment_id,
-                   Generation.generation_index)
+        "adv_30_vertical_10runs_2.sqlite": 2,
+        "adv_30_vertical_10runs_last2.sqlite": 3,
+        "adv_30_vertical_test.sqlite": 2,
+        "adv_30_run2.sqlite": 1
 
-            .join_from(Experiment, Generation, Experiment.id == Generation.experiment_id)
-            .join_from(Generation, Population, Generation.population_id == Population.id)
-            .join_from(Population, Individual, Population.id == Individual.population_id)
-            .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-
-            .where(Generation.generation_index < 401)
-            #.order_by(Individual.fitness.desc())
-        ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
-    data = [
-    {
-        "genotype": genotype,  # Store the Genotype object directly
-        "fitness": fitness,
-        "experiment_id": experiment_id,
-        "generation_index": generation_index,
-
+        # Add other db_path mappings as needed
     }
-    for genotype, fitness, experiment_id, generation_index in rows
-    ]
-    df = pd.DataFrame(data)
-    return df
+    number_of_runs = db_path_to_variable.get(db_path, None)
+    all_df_list = []
+    for run in range(1,number_of_runs+1):
+        print(run)
+        with Session(dbengine) as ses:
+            rows = ses.execute(
+                select(Genotype, Individual.fitness, Generation.experiment_id,
+                    Generation.generation_index)
+
+                .join_from(Experiment, Generation, Experiment.id == Generation.experiment_id)
+                .join_from(Generation, Population, Generation.population_id == Population.id)
+                .join_from(Population, Individual, Population.id == Individual.population_id)
+                .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
+
+
+                #.order_by(Individual.fitness.desc())
+            ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
+        data = [
+        {
+            "genotype": genotype,  # Store the Genotype object directly
+            "fitness": fitness,
+            "experiment_id": experiment_id,
+            "generation_index": generation_index,
+
+        }
+        for genotype, fitness, experiment_id, generation_index in rows
+        ]
+        df = pd.DataFrame(data)
+        df['experiment_id'] = run
+        all_df_list.append(df)
+
+        
+    all_data = pd.concat(all_df_list, ignore_index=True)
+
+
+    return all_data
 
 
 def main() -> None:
@@ -102,8 +121,13 @@ def main() -> None:
     # Load the best individual from the database.
     
     all_data = pd.DataFrame()
+    db_paths = [
+        "adv_30_vertical_10runs_2.sqlite",
+        "adv_30_vertical_10runs_last2.sqlite",
+        "adv_30_vertical_test.sqlite",
+        "adv_30_run2.sqlite"]
+    
     all_df_list = []
-    db_paths = ['adv_30_vertical_10runs_2.sqlite']
     for db_path in db_paths:
         all_df_list.append(process_database(db_path))
     all_data = pd.concat(all_df_list, ignore_index=True)
@@ -138,27 +162,25 @@ def main() -> None:
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # Primary axis for body length
-    ax1.set_xlabel('Generation Index', fontsize=16)
-    ax1.set_ylabel('Genome Length', fontsize=16, color='blue')
+    ax1.set_xlabel('Generation Index', fontsize=12)
+    ax1.set_ylabel('Genome Length', fontsize=12, color='blue')
     ax1.plot(result['generation_index'], result['avg_body_length'], linestyle='-', linewidth=2, color='blue', label='Average Genome Length')
-    ax1.tick_params(axis='y', labelcolor='blue', labelsize=14)
-    ax1.tick_params(axis='x', labelsize=14)
+    ax1.tick_params(axis='y', labelcolor='blue')
     ax1.grid(True, linestyle='--', alpha=0.6)
     ax1.set_xlim(left=0)
 # Secondary axis for fitness
     ax2 = ax1.twinx()
-    ax2.set_ylabel('Fitness', fontsize=16, color='green')
+    ax2.set_ylabel('Fitness', fontsize=12, color='green')
     ax2.plot(result['generation_index'], result['avg_fitness'], linestyle='-', linewidth=2, color='green', label='Average Fitness')
     ax2.plot(result['generation_index'], result['avg_highest_fitness'], linestyle='-', linewidth=2, color='orange', label='Average Highest Fitness')
     ax2.plot(result['generation_index'], result['total_highest_fitness'], linestyle='--', linewidth=2, color='red', label='Total Highest Fitness')  # New line for highest fitness
-    ax2.tick_params(axis='y', labelcolor='green', labelsize=14)
+    ax2.tick_params(axis='y', labelcolor='green')
     if config.DATABASE_FILE != 'adv_30_vertical_nocross_10runs.sqlite':
         ax1.set_ylim(bottom=0)
 # Add title and legends
-    fig.suptitle('Genome Length and Fitness Metrics of Experiment 2', fontsize=16)
-    lines_1, labels_1 = ax1.get_legend_handles_labels()
-    lines_2, labels_2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower center',fontsize=14)
+    fig.suptitle('Genome Length and Fitness Metrics of Experiment 1', fontsize=14)
+    ax1.legend(loc='upper left', fontsize=10)
+    ax2.legend(loc='lower right', fontsize=10)
     ax2.set_ylim(bottom=0)
 
     plt.show()

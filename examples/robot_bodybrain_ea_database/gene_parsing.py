@@ -139,7 +139,7 @@ def parsing(genotype):
         # Increase nucleotide index
         nucleotide_idx += 1
     #print(promotors)
-    return len(genes * 7)
+    return len(genes) * 7
 
 
 
@@ -158,39 +158,29 @@ def main() -> None:
 
     with Session(dbengine) as ses:
         rows = ses.execute(
-            select(Genotype, Individual.fitness, Individual.energy_used, Individual.efficiency,
-                   Individual.x_distance, Individual.y_distance, Generation.experiment_id,
+            select(Genotype, Individual.fitness, Generation.experiment_id,
                    Generation.generation_index, Individual.body_id)
 
             .join_from(Experiment, Generation, Experiment.id == Generation.experiment_id)
             .join_from(Generation, Population, Generation.population_id == Population.id)
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-            .where(Experiment.id == 2)
-            .order_by(Individual.fitness.desc())
+            .where(Experiment.id == 1)
+
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [
     {
         "genotype": genotype,  # Store the Genotype object directly
         "fitness": fitness,
-        "energy_used": energy_used,
-        "efficiency": efficiency,
-        "x_distance": x_distance,
-        "y_distance": y_distance,
+
         "experiment_id": experiment_id,
         "generation_index": generation_index,
         "body_id": body_id,
     }
-    for genotype, fitness, energy_used, efficiency, x_distance, y_distance, experiment_id, generation_index, body_id in rows
+    for genotype, fitness, experiment_id, generation_index, body_id in rows
     ]
     df = pd.DataFrame(data)
-    #print(df.genotype[0])
-    evaluator = Evaluator(
-        headless = False, num_simulators = 1,
-                          terrain = config.TERRAIN, fitness_function = config.FITNESS_FUNCTION,
-                          simulation_time = config.SIMULATION_TIME, sampling_frequency = config.SAMPLING_FREQUENCY, 
-                          simulation_timestep = config.SIMULATION_TIMESTEP, control_frequency = config.CONTROL_FREQUENCY
-    )
+
 
 
     #fitness = evaluator.evaluate([df.genotype[0].develop(include_bias = config.CPPNBIAS,
@@ -209,12 +199,14 @@ def main() -> None:
     df['body_length'] = df['genotype'].apply(lambda x: len(x.body))
     df['usage_ratio'] = df['parsed_genes_length'] / df['body_length']
     df = df[df['generation_index'] % 2 == 0]
+    print(df)
 
 # Group by 'generation' and compute the average length
     result = df.groupby('generation_index').agg(
     avg_body_length=('body_length', 'mean'),
     avg_fitness=('fitness', 'mean'),
-    avg_usage_ratio=('parsed_genes_length', 'mean')
+    avg_usage_ratio=('usage_ratio', 'mean'),
+    avg_used_genes=('parsed_genes_length', 'mean')
     ).reset_index()
 
     result['max_fitness'] = df.groupby('generation_index')['fitness'].max().reset_index(drop=True)
@@ -226,7 +218,7 @@ def main() -> None:
     ax1.set_xlabel('Generation Index', fontsize=12)
     ax1.set_ylabel('Average Genome Length', fontsize=12, color='blue')
     ax1.plot(result['generation_index'], result['avg_body_length'], linestyle='-', linewidth=2, color='blue', label='Average Genome Length')
-    ax1.plot(result['generation_index'], result['avg_usage_ratio'], linestyle='--', linewidth=2, color='green', label='Average Usage Ratio')  # Add another column on the same axis
+    ax1.plot(result['generation_index'], result['avg_used_genes'], linestyle='--', linewidth=2, color='green', label='Genes used')  # Add another column on the same axis
     ax1.tick_params(axis='y', labelcolor='blue')
     ax1.grid(True, linestyle='--', alpha=0.6)
 

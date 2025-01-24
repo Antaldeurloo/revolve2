@@ -406,10 +406,10 @@ class DevelopGRN():
                     max_rTF = max([regulatory_min, regulatory_max])
                     gene = [regulatory_transcription_factor_label, min_rTF, max_rTF,
                                 transcription_factor_label, float(transcription_factor_amount), int(diffusion_site_label)]
-                    print('\n')
-                    print([regulatory_transcription_factor, regulatory_min, regulatory_max, transcription_factor,transcription_factor_amount, diffusion_site])
-                    print(gene)
-                    print('\n')
+                    #print('\n')
+                    #print([regulatory_transcription_factor, regulatory_min, regulatory_max, transcription_factor,transcription_factor_amount, diffusion_site])
+                    #print(gene)
+                    #print('\n')
                     # Append gene to promoters
                     self.promotors.append(gene)
 
@@ -466,7 +466,7 @@ class DevelopGRN():
         
         # Expresses promoters of first cell and updates transcription factors
         first_cell, expressed = self.express_promoters(first_cell, CoreV2)
-        print('first expressed: ' + str(expressed))
+        #print('first expressed: ' + str(expressed))
         # Append first cell
         self.cells.append(first_cell)
 
@@ -612,8 +612,8 @@ class DevelopGRN():
 
                 if icell >= ncells:
                     _, expressed_ratio =  self.express_promoters(cell, type(cell.developed_module.module))
-                    print(expressed_ratio)
-                    print(iterations)
+                    #print(expressed_ratio)
+                    #print(iterations)
                     iterations += 1
                     expressions += expressed_ratio
                 # Get increase for next loop
@@ -621,11 +621,11 @@ class DevelopGRN():
                     self.set_increase(cell, TF)
             # ---- Early stop?
             if self.quantity_modules >= self.max_modules:
-                print('max modules')
+                #print('max modules')
                 break
-        print(expressions, iterations)
+        #print(expressions, iterations)
         expressed_avg = expressions / (iterations - 1)
-        print('average is: ' + str(expressed_avg))
+        #print('average is: ' + str(expressed_avg))
         return self
 
     def place_module(self, cell):

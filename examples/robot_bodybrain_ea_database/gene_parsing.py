@@ -142,8 +142,64 @@ def parsing(genotype):
     return len(genes) * 7
 
 
+def process_database(db_path):
+
+    dbengine = open_database_sqlite(
+        db_path, open_method=OpenMethod.OPEN_IF_EXISTS
+    )
+    db_path_to_variable = {
+    "adv_30_vertical_10runs.sqlite": {"runs": 2, "start_run_number": 1},
+    "adv_30_vertical_10runs_2.sqlite": {"runs": 2, "start_run_number": 3},
+    "adv_30_vertical_10runs_last2.sqlite": {"runs": 3, "start_run_number": 5},
+    "adv_30_vertical_test.sqlite": {"runs": 2, "start_run_number": 8},
+    "adv_30_run2.sqlite": {"runs": 1, "start_run_number": 10},
+}
+    db_info = db_path_to_variable.get(db_path, None)
+    if not db_info:
+        raise ValueError(f"No configuration found for db_path: {db_path}")
+
+    number_of_runs = db_info["runs"]
+    current_run_number = db_info["start_run_number"]
+    all_df_list = []
+    for run in range(1,number_of_runs+1):
+        print(run)
+        with Session(dbengine) as ses:
+            rows = ses.execute(
+                select(Genotype, Individual.fitness, Generation.experiment_id,
+                    Generation.generation_index)
+
+                .join_from(Experiment, Generation, Experiment.id == Generation.experiment_id)
+                .join_from(Generation, Population, Generation.population_id == Population.id)
+                .join_from(Population, Individual, Population.id == Individual.population_id)
+                .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
+                .where(Generation.generation_index == 300)
+                .where(Generation.experiment_id == run)
 
 
+                #.order_by(Individual.fitness.desc())
+            ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
+        data = [
+        {
+            "genotype": genotype,  # Store the Genotype object directly
+            "fitness": fitness,
+            "experiment_id": experiment_id,
+            "generation_index": generation_index,
+
+        }
+        for genotype, fitness, experiment_id, generation_index in rows
+        ]
+        df = pd.DataFrame(data)
+        print(df)
+        print('current_run_number:' + str(current_run_number) + ', run:' + str(run))
+        df['experiment_id'] = (current_run_number + run - 1)
+        df['body_length'] = df['genotype'].apply(lambda x: len(x.body))
+        df = df[df['generation_index'] % 2 == 0]
+        df['generation_index'] = df['generation_index'].apply(lambda x: x / 2)
+        all_df_list.append(df)
+
+        
+    all_data = pd.concat(all_df_list, ignore_index=True)
+    return all_data
 
 
 
@@ -151,36 +207,17 @@ def main() -> None:
     """Perform the rerun."""
     setup_logging()
 
-    # Load the best individual from the database.
-    dbengine = open_database_sqlite(
-        config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
-    )
-
-    with Session(dbengine) as ses:
-        rows = ses.execute(
-            select(Genotype, Individual.fitness, Generation.experiment_id,
-                   Generation.generation_index, Individual.body_id)
-
-            .join_from(Experiment, Generation, Experiment.id == Generation.experiment_id)
-            .join_from(Generation, Population, Generation.population_id == Population.id)
-            .join_from(Population, Individual, Population.id == Individual.population_id)
-            .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-            .where(Experiment.id == 1)
-
-        ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
-    data = [
-    {
-        "genotype": genotype,  # Store the Genotype object directly
-        "fitness": fitness,
-
-        "experiment_id": experiment_id,
-        "generation_index": generation_index,
-        "body_id": body_id,
-    }
-    for genotype, fitness, experiment_id, generation_index, body_id in rows
-    ]
-    df = pd.DataFrame(data)
-
+    
+    all_data = pd.DataFrame()
+    all_df_list = []
+    db_paths = ["adv_30_vertical_10runs.sqlite",
+        "adv_30_vertical_10runs_2.sqlite",
+        "adv_30_vertical_10runs_last2.sqlite",
+        "adv_30_vertical_test.sqlite",
+        "adv_30_run2.sqlite"]
+    for db_path in db_paths:
+        all_df_list.append(process_database(db_path))
+    all_data = pd.concat(all_df_list, ignore_index=True)
 
 
     #fitness = evaluator.evaluate([df.genotype[0].develop(include_bias = config.CPPNBIAS,
@@ -194,23 +231,22 @@ def main() -> None:
 
     
 
-    df['parsed_genes_length'] = df['genotype'].apply(lambda x: parsing(x.body))
-    
-    df['body_length'] = df['genotype'].apply(lambda x: len(x.body))
-    df['usage_ratio'] = df['parsed_genes_length'] / df['body_length']
-    df = df[df['generation_index'] % 2 == 0]
-    print(df)
+
+    all_data['usage_ratio'] = all_data['body_length'] / all_data['body_length']
+
+    print(all_data)
 
 # Group by 'generation' and compute the average length
-    result = df.groupby('generation_index').agg(
+    result = all_data.groupby('generation_index').agg(
     avg_body_length=('body_length', 'mean'),
     avg_fitness=('fitness', 'mean'),
     avg_usage_ratio=('usage_ratio', 'mean'),
-    avg_used_genes=('parsed_genes_length', 'mean')
+    avg_used_genes=('body_len', 'mean'),
+
     ).reset_index()
 
-    result['max_fitness'] = df.groupby('generation_index')['fitness'].max().reset_index(drop=True)
-
+    result['max_fitness'] = all_data.groupby('generation_index')['fitness'].max().reset_index(drop=True)
+    print(result)
 # Line graph
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
@@ -236,7 +272,7 @@ def main() -> None:
     ax1.legend(loc='upper left', fontsize=10)
     ax2.legend(loc='upper right', fontsize=10)
 
-    plt.show()
+    #plt.show()
 
 
 if __name__ == "__main__":

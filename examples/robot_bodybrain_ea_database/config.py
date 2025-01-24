@@ -2,8 +2,8 @@
 import os 
 
 DATABASE_FILE = os.environ["DATABASE_FILE"]
-NUM_REPETITIONS = 10 #20#5
-NUM_SIMULATORS = 1
+NUM_REPETITIONS = 1 #20#5
+NUM_SIMULATORS = os.cpu_count()
 POPULATION_SIZE = 100
 OFFSPRING_SIZE = 50
 if os.environ["MODE"] == "random search":

@@ -152,7 +152,7 @@ def process_database(db_path):
     "adv_30_vertical_10runs_2.sqlite": {"runs": 2, "start_run_number": 3},
     "adv_30_vertical_10runs_last2.sqlite": {"runs": 3, "start_run_number": 5},
     "adv_30_vertical_test.sqlite": {"runs": 2, "start_run_number": 8},
-    "adv_30_run2.sqlite": {"runs": 1, "start_run_number": 10},
+    "final_std_cross.sqlite": {"runs": 1, "start_run_number": 10},
 }
     db_info = db_path_to_variable.get(db_path, None)
     if not db_info:
@@ -163,6 +163,8 @@ def process_database(db_path):
     all_df_list = []
     for run in range(1,number_of_runs+1):
         print(run)
+        if db_path == 'final_std_cross.sqlite':
+            run = 2
         with Session(dbengine) as ses:
             rows = ses.execute(
                 select(Genotype, Individual.fitness, Generation.experiment_id,
@@ -172,7 +174,7 @@ def process_database(db_path):
                 .join_from(Generation, Population, Generation.population_id == Population.id)
                 .join_from(Population, Individual, Population.id == Individual.population_id)
                 .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-                .where(Generation.generation_index == 300)
+                .where(Generation.generation_index == 400)
                 .where(Generation.experiment_id == run)
 
 
@@ -195,6 +197,7 @@ def process_database(db_path):
         df['body_length'] = df['genotype'].apply(lambda x: len(x.body))
         df = df[df['generation_index'] % 2 == 0]
         df['generation_index'] = df['generation_index'].apply(lambda x: x / 2)
+        df['used_genes'] = df['genotype'].apply(lambda x: parsing(x.body))
         all_df_list.append(df)
 
         
@@ -214,7 +217,7 @@ def main() -> None:
         "adv_30_vertical_10runs_2.sqlite",
         "adv_30_vertical_10runs_last2.sqlite",
         "adv_30_vertical_test.sqlite",
-        "adv_30_run2.sqlite"]
+        "final_std_cross.sqlite"]
     for db_path in db_paths:
         all_df_list.append(process_database(db_path))
     all_data = pd.concat(all_df_list, ignore_index=True)
@@ -232,7 +235,7 @@ def main() -> None:
     
 
 
-    all_data['usage_ratio'] = all_data['body_length'] / all_data['body_length']
+    all_data['usage_ratio'] = all_data['used_genes'] / all_data['body_length']
 
     print(all_data)
 
@@ -241,7 +244,7 @@ def main() -> None:
     avg_body_length=('body_length', 'mean'),
     avg_fitness=('fitness', 'mean'),
     avg_usage_ratio=('usage_ratio', 'mean'),
-    avg_used_genes=('body_len', 'mean'),
+    avg_used_genes=('used_genes', 'mean'),
 
     ).reset_index()
 

@@ -69,7 +69,8 @@ import config
 def main() -> None:
     """Perform the rerun."""
     setup_logging()
-
+    print(config.DATABASE_FILE)
+    print(type(config.DATABASE_FILE))
     # Load the best individual from the database.
     dbengine = open_database_sqlite(
         config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
@@ -85,7 +86,7 @@ def main() -> None:
             .join_from(Generation, Population, Generation.population_id == Population.id)
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-            .where(Experiment.id == 1)
+            .where(Experiment.id == 2)
             .order_by(Individual.fitness.desc())
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [
@@ -104,12 +105,6 @@ def main() -> None:
     ]
     df = pd.DataFrame(data)
     #print(df.genotype[0])
-    evaluator = Evaluator(
-        headless = False, num_simulators = 1,
-                          terrain = config.TERRAIN, fitness_function = config.FITNESS_FUNCTION,
-                          simulation_time = config.SIMULATION_TIME, sampling_frequency = config.SAMPLING_FREQUENCY, 
-                          simulation_timestep = config.SIMULATION_TIMESTEP, control_frequency = config.CONTROL_FREQUENCY
-    )
     #fitness = evaluator.evaluate([df.genotype[0].develop(include_bias = config.CPPNBIAS,
     #            
     #            max_parts = config.MAX_PARTS, 

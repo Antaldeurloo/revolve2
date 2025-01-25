@@ -72,7 +72,7 @@ def process_database(db_path):
     "adv_30_vertical_10runs_2.sqlite": {"runs": 2, "start_run_number": 3},
     "adv_30_vertical_10runs_last2.sqlite": {"runs": 3, "start_run_number": 5},
     "adv_30_vertical_test.sqlite": {"runs": 2, "start_run_number": 8},
-    "adv_30_run2.sqlite": {"runs": 1, "start_run_number": 10},
+    "final_std_cross.sqlite": {"runs": 1, "start_run_number": 10},
 }
     db_info = db_path_to_variable.get(db_path, None)
     if not db_info:
@@ -83,6 +83,8 @@ def process_database(db_path):
     all_df_list = []
     for run in range(1,number_of_runs+1):
         print(run)
+        if db_path == 'final_std_cross.sqlite':
+            run = 2
         with Session(dbengine) as ses:
             rows = ses.execute(
                 select(Genotype, Individual.fitness, Generation.experiment_id,
@@ -135,7 +137,7 @@ def main() -> None:
         "adv_30_vertical_10runs_2.sqlite",
         "adv_30_vertical_10runs_last2.sqlite",
         "adv_30_vertical_test.sqlite",
-        "adv_30_run2.sqlite"]
+        "final_std_cross.sqlite"]
     
     all_df_list = []
     for db_path in db_paths:

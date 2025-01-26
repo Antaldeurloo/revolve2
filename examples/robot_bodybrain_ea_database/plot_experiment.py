@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 import pandas as pd
-
+import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -23,7 +23,7 @@ assert writevideos in ["True", "False"], "WRITEVIDEOS must be either True or Fal
 assert algo in ["GRN", "GRN_system", "GRN_system_adv", "CPPN"], "ALGORITHM must be either GRN, 'GRN_system' or CPPN"
 assert mode in ["random search", "evolution"], "MODE must be either random search or evolution"
 assert type(file_name) == str, "FILE_NAME must be a string"
-assert file_name.endswith(".sqlite"), "FILE_NAME must end with sqlite"
+# assert file_name.endswith(".sqlite"), "FILE_NAME must end with sqlite"
 os.environ["ALGORITHM"] = algo
 os.environ["MODE"] = mode
 os.environ["DATABASE_FILE"] = file_name
@@ -46,6 +46,7 @@ from population import Population
 import shutil
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from matplotlib.ticker import MaxNLocator
 
 from revolve2.experimentation.revolve2.experimentation.database import OpenMethod, open_database_sqlite
 from revolve2.experimentation.revolve2.experimentation.logging import setup_logging
@@ -60,12 +61,92 @@ from revolve2.modular_robot_simulation.revolve2.modular_robot_simulation import 
 
 from genotype_grn import Genotype
 import config
+types_nucleotypes = 6 # Number of types of nucleotypes
+regulatory_tfs = 2
+structural_trs = len(['brick', 'joint', 'rotation'])
+ # Number of diffusion sites (probably front, back, left, right)?
+
+regulatory_transcription_factor_idx = 0 # Index of the regulatory transcription factor label
+regulatory_min_idx = 1 # Index of the minimum regulatory value to which gene is responsive
+regulatory_max_idx = 2 # Index of the maximum regulatory value to which gene is responsive
+transcription_factor_idx = 3 # Index of the transcription factor label
+transcription_factor_amount_idx = 4 # Index of the transcription factor amount upon expression
+diffusion_site_idx = 5 # Index of release site of the transcription factor
+promoter_threshold = 0.8
+
+def parsing(genotype):
+    genes = []
+    nucleotide_idx = 0
+        #genotype = [0.5725732843577864,0.6646651017665862,0.550558058321476,0.5535269796848297,0.6043629667907954,0.37288902074098584,0.5954864632338286,0.56,0.51,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.73,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.69,0.43,0.29,0.63,0.77,0.87,0.16,0.1,0.07,0.31,0.98,0.14,0.02,0.75,0.95,0.95,0.91,1.0,0.74,0.51,0.44,0.61,0.81,0.68,0.9,0.92,0.78,0.8,0.46,0.98,0.12,0.14,0.21,0.83,0.5,0.79,0.57,0.97,0.39,0.55,0.84,0.48,0.21,0.28,0.16,0.9,0.41,0.61,0.58,0.2,0.03,0.89,0.41,0.19,0.12,0.31,0.73,0.92,0.34,0.61,0.17,0.96,0.51,0.98,0.02,0.02,0.29,0.68,0.96,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.4,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.48,0.78,0.39,0.37,0.65,0.79,0.68,0.58,0.15,0.82,0.76,0.31,0.36,0.56,0.51,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.69,0.43,0.29,0.63,0.77,0.87,0.16,0.1,0.07,0.31,0.98,0.14,0.02,0.75,0.95,0.95,0.91,1.0,0.74,0.51,0.44,0.61,0.81,0.68,0.9,0.92,0.78,0.8,0.46,0.98,0.12,0.14,0.21,0.83,0.5,0.79,0.57,0.97,0.39,0.55,0.84,0.48,0.21,0.28,0.16,0.9,0.41,0.61,0.58,0.2,0.03,0.89,0.41,0.19,0.12,0.31,0.73,0.92,0.34,0.61,0.17,0.96,0.51,0.98,0.02,0.02,0.29,0.68,0.96,0.32,0.56,0.84,0.01,0.63,0.85,0.41,0.4,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.02,0.99,0.31,0.73,0.61,0.94,0.5,0.48,0.78,0.39,0.37,0.65,0.79,0.68,0.58,0.15,0.82,0.76,0.31,0.36,0.56,0.84,0.01,0.53,0.85,0.41,0.4,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.02,0.98,0.9,0.85,0.71,0.49,0.56,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32,0.57,0.84,0.01,0.63,0.85,0.41,0.16,0.49,0.74,0.04,0.18,0.84,0.2,0.32]
+        #genotype = genotype[7:]
+        #print(genotype)
+        # Repeat as long as index is smaller than gene length
+    while nucleotide_idx < len(genotype):
+        # If the associated value is smaller than the promoter threshold
+        #print(genotype[nucleotide_idx])
+        if genotype[nucleotide_idx] < promoter_threshold:
+            # If there are nucleotypes enough to compose a gene
+            if (len(genotype) - 1 - nucleotide_idx) >= types_nucleotypes:
+                
+                # Get regulatory transcription factor(s)
+                regulatory_transcription_factor = genotype[nucleotide_idx + regulatory_transcription_factor_idx + 1] # Which regulatory tf is expressed?
+                regulatory_min = np.float64(genotype[nucleotide_idx + regulatory_min_idx + 1]) # Between those two values regulatory tf expresses gene
+                regulatory_max = np.float64(genotype[nucleotide_idx + regulatory_max_idx + 1])
+                # Get transcription factor, -amount and diffusion site
+                transcription_factor = genotype[nucleotide_idx + transcription_factor_idx + 1] # Which tf is expressed?
+                transcription_factor_amount = genotype[nucleotide_idx + transcription_factor_amount_idx + 1] # Amount of increase of the tf at the diffusion site
+                diffusion_site = genotype[nucleotide_idx + diffusion_site_idx + 1] # Where the tf is expressed
+                
+                # Converts rtfs and tfs values into labels
+                range_size = 1 / (structural_trs + regulatory_tfs)
+                limits = [round(limit / 100, 2) for limit in range(0, 1 * 100, int(range_size * 100))]
+                for idx in range(0, len(limits) - 1):
+                    # Set label for regulatory transcription factor
+                    if (regulatory_transcription_factor >= limits[idx]) and (regulatory_transcription_factor < limits[idx + 1]):
+                        regulatory_transcription_factor_label = 'TF' + str(idx + 1)
+                    elif regulatory_transcription_factor >= limits[idx + 1]:
+                        regulatory_transcription_factor_label = 'TF' + str(len(limits))
+                    # Set label for transcription factor
+                    if (transcription_factor >= limits[idx]) and (transcription_factor < limits[idx + 1]):
+                        transcription_factor_label = 'TF' + str(idx + 1)
+                    elif transcription_factor >= limits[idx + 1]:
+                        transcription_factor_label = 'TF' + str(len(limits))
+        
+                # Converts diffusion sites values into labels
+                range_size = 1 / 4
+                limits = [round(limit / 100, 2) for limit in range(0, 1 * 100, int(range_size * 100))]
+                for idx in range(0, len(limits) - 1):
+                    if limits[idx+1] > diffusion_site >= limits[idx]:
+                        diffusion_site_label = idx
+                    elif diffusion_site >= limits[idx + 1]:
+                        diffusion_site_label = len(limits) - 1
+                
+                # Translate gene to interpretable format
+                min_rTF = min([regulatory_min, regulatory_max])
+                max_rTF = max([regulatory_min, regulatory_max])
+                gene = [regulatory_transcription_factor_label, min_rTF, max_rTF,
+                            transcription_factor_label, float(transcription_factor_amount), int(diffusion_site_label)]
+                #print('\n')
+                #print([regulatory_transcription_factor, regulatory_min, regulatory_max, transcription_factor,transcription_factor_amount, diffusion_site])
+                #print(gene)
+                #print('\n')
+                # Append gene to promoters
+                genes.append(gene)
+
+                # Increase nucleotide index
+                nucleotide_idx += types_nucleotypes
+        
+        # Increase nucleotide index
+        nucleotide_idx += 1
+    #print(promotors)
+    return len(genes) * 7
+
 
 
 def process_database(db_path):
 
     dbengine = open_database_sqlite(
-        config.DATABASE_FILE, open_method=OpenMethod.OPEN_IF_EXISTS
+        db_path, open_method=OpenMethod.OPEN_IF_EXISTS
     )
 
     with Session(dbengine) as ses:
@@ -78,7 +159,7 @@ def process_database(db_path):
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
 
-            .where(Generation.generation_index < 401)
+            .where(Generation.generation_index == 100)
             #.order_by(Individual.fitness.desc())
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [
@@ -103,7 +184,19 @@ def main() -> None:
     
     all_data = pd.DataFrame()
     all_df_list = []
-    db_paths = ['adv_30_vertical_10runs_2.sqlite']
+    if config.DATABASE_FILE == 'standard':
+        db_paths = [
+        # "adv_30_vertical_10runs.sqlite",
+        # "adv_30_vertical_10runs_2.sqlite",
+        # "adv_30_vertical_10runs_last2.sqlite",
+        # "adv_30_vertical_test.sqlite",
+        "final_std_cross.sqlite"]
+    elif str(config.DATABASE_FILE) == 'nocross':
+        db_paths = ['adv_30_vertical_nocross_10runs.sqlite']
+    elif config.DATABASE_FILE == 'controlled':
+        db_paths = ['controlled_cross_9more.sqlite']
+    else:
+        db_paths = [config.DATABASE_FILE]
     for db_path in db_paths:
         all_df_list.append(process_database(db_path))
     all_data = pd.concat(all_df_list, ignore_index=True)
@@ -120,48 +213,77 @@ def main() -> None:
     all_data['body_length'] = all_data['genotype'].apply(lambda x: len(x.body))
     all_data = all_data[all_data['generation_index'] % 2 == 0]
     all_data['generation_index'] = all_data['generation_index'].apply(lambda x: x / 2)
-
+    all_data['std_per_group'] = all_data.groupby(['generation_index', 'experiment_id'])['fitness'].transform('std')
     #all_data['max_fitness'] = all_data.groupby(['generation_index', 'experiment_id']).agg(max_fitness=('fitness', 'max')).reset_index()
     all_data['max_fitness_per_group'] = all_data.groupby(['generation_index', 'experiment_id'])['fitness'].transform('max')
+    all_data['used_genes'] = all_data['genotype'].apply(lambda x: parsing(x.body))
+    all_data['usage_ratio'] = all_data['used_genes'] / all_data['body_length']
     print(all_data)
 # Group by 'generation' and compute the average length
     result = all_data.groupby('generation_index').agg(
     avg_body_length=('body_length', 'mean'),
     avg_fitness=('fitness', 'mean'),
     avg_highest_fitness=('max_fitness_per_group','mean'),
-    total_highest_fitness=('max_fitness_per_group','max')
+    total_highest_fitness=('max_fitness_per_group','max'),
+    std=('std_per_group','mean'),
+    nucleotide_usage=('usage_ratio','mean')
     ).reset_index()
+    average_std = result['std'].mean()
+    print(f"Average std: {average_std}")
 
-
-
+    print(result)
+    file_path = 'result.csv'
+    result.to_csv(file_path, index=False)
 # Line graph
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    fig, ax1 = plt.subplots(figsize=(11, 7))
 
 # Primary axis for body length
-    ax1.set_xlabel('Generation Index', fontsize=16)
-    ax1.set_ylabel('Genome Length', fontsize=16, color='blue')
-    ax1.plot(result['generation_index'], result['avg_body_length'], linestyle='-', linewidth=2, color='blue', label='Average Genome Length')
-    ax1.tick_params(axis='y', labelcolor='blue', labelsize=14)
-    ax1.tick_params(axis='x', labelsize=14)
+    ax1.set_xlabel('Generation', fontsize=26)
+    ax1.set_ylabel('Genome Length', fontsize=26, color='blue')
+    ax1.plot(result['generation_index'], result['avg_body_length'], linestyle='-', linewidth=4, color='blue', label='Average Genome Length')
+    ax1.tick_params(axis='y', labelcolor='blue', labelsize=24)
+    ax1.tick_params(axis='x', labelsize=24)
+    ax1.yaxis.set_major_locator(MaxNLocator(nbins=5))
     ax1.grid(True, linestyle='--', alpha=0.6)
     ax1.set_xlim(left=0)
+    ax1.xaxis.set_major_locator(MaxNLocator(nbins=5))
+    
+    ax1.set_ylim(bottom=0, top=1650)
 # Secondary axis for fitness
     ax2 = ax1.twinx()
-    ax2.set_ylabel('Fitness', fontsize=16, color='green')
-    ax2.plot(result['generation_index'], result['avg_fitness'], linestyle='-', linewidth=2, color='green', label='Average Fitness')
-    ax2.plot(result['generation_index'], result['avg_highest_fitness'], linestyle='-', linewidth=2, color='orange', label='Average Highest Fitness')
-    ax2.plot(result['generation_index'], result['total_highest_fitness'], linestyle='--', linewidth=2, color='red', label='Total Highest Fitness')  # New line for highest fitness
-    ax2.tick_params(axis='y', labelcolor='green', labelsize=14)
-    if config.DATABASE_FILE != 'adv_30_vertical_nocross_10runs.sqlite':
-        ax1.set_ylim(bottom=0)
-# Add title and legends
-    fig.suptitle('Genome Length and Fitness Metrics of Experiment 2', fontsize=16)
-    lines_1, labels_1 = ax1.get_legend_handles_labels()
-    lines_2, labels_2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower center',fontsize=14)
-    ax2.set_ylim(bottom=0)
+    ax2.set_ylabel('Fitness', fontsize=26, color='black')
+    ax2.plot(result['generation_index'], result['avg_fitness'], linestyle='-', linewidth=4, color='green', label='Average Fitness')
+    ax2.plot(result['generation_index'], result['avg_highest_fitness'], linestyle='-', linewidth=4, color='orange', label='Average Highest Fitness')
+    ax2.plot(result['generation_index'], result['total_highest_fitness'], linestyle='--', linewidth=4, color='red', label='Total Highest Fitness')  # New line for highest fitness
+    ax2.tick_params(axis='y', labelcolor='black', labelsize=24)
+    ax2.yaxis.set_major_locator(MaxNLocator(nbins=7))
+    ax2.set_ylim(bottom=0, top=13)
 
-    plt.show()
+    for spine in ax1.spines.values():
+        spine.set_linewidth(0.6)
+    for spine in ax2.spines.values():
+        spine.set_linewidth(0.6)
+    # if config.DATABASE_FILE != 'adv_30_vertical_nocross_10runs.sqlite':
+        # ax1.set_ylim(bottom=0)
+# Add title and legends
+
+    # lines_1, labels_1 = ax1.get_legend_handles_labels()
+    # lines_2, labels_2 = ax2.get_legend_handles_labels()
+    # legend = ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower right',fontsize=16)
+    # legend.remove()
+    # fig_legend = plt.figure(figsize=(4, 2))  # Adjust size as needed
+    # ax_legend = fig_legend.add_subplot(111)
+    # ax_legend.axis('off')  # Turn off axes for a clean legend
+    # # Reuse the handles and labels from the original legend
+    # ax_legend.legend(handles=legend.legend_handles, labels=[text.get_text() for text in legend.get_texts()],
+    #                 loc='center', fontsize=16)
+    # fig_legend.show()
+    # # Save the legend as a standalone PDF
+    # fig_legend.savefig("custom_legend.pdf", bbox_inches='tight', dpi=300)
+    plt.savefig(config.DATABASE_FILE + ".pdf", format="pdf")
+   
+    #plt.show()
+
 
 
 if __name__ == "__main__":

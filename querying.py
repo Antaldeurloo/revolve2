@@ -3,7 +3,7 @@ import pandas as pd
 #from ci_group.revolve2.ci_group.genotypes.cppnwin._body_genotype_v2_multineat_genotype_pickle_wrapper import MultineatGenotypePickleWrapper
 
 # Connect to the SQLite database
-conn = sqlite3.connect('adv_30_run2.sqlite.sqlite')
+conn = sqlite3.connect('final_std_cross.sqlite')
 cursor = conn.cursor()
 
 # Run a query
@@ -33,7 +33,7 @@ query2 = """
 
 query3 = """
 
-    select * from population
+    select * from generation
 
 """
 

@@ -339,8 +339,8 @@ class DevelopGRN():
     def develop(self) -> BodyV2:
         """Goal:
             Develops the body of the robot."""
-        self = self.develop_body()
-        return self.phenotype_body
+        self, expressed_ratio = self.develop_body()
+        return self.phenotype_body, expressed_ratio
 
     def develop_body(self):
         """Goal:
@@ -348,9 +348,9 @@ class DevelopGRN():
         # Call 'gene_parser' --> decodes genes from the genotype
         self = self.gene_parser()
         # Call 'regulate' --> actually does everything
-        self = self.regulate()
+        self, expressed_ratio = self.regulate()
 
-        return self
+        return self, expressed_ratio
     
     def gene_parser(self):
         """Goal:
@@ -427,10 +427,10 @@ class DevelopGRN():
     def regulate(self):
         """Goal:
             Regulates the development."""
-        self = self.maternal_injection()
-        self = self.growth()
+        self, first_ratio = self.maternal_injection()
+        self, expressed_ratio = self.growth(first_ratio)
 
-        return self
+        return self, expressed_ratio
 
     def maternal_injection(self):
         """Goal:
@@ -483,7 +483,7 @@ class DevelopGRN():
         # --- Increase number of developed nodes
         self.developed_nodes += len(first_cell.indices)
 
-        return self
+        return self, expressed
 
     def express_promoters(self, new_cell, cell_type):
         """Goal:
@@ -566,11 +566,11 @@ class DevelopGRN():
     
         return cell
 
-    def growth(self):
+    def growth(self, first_ratio):
         """Goal:
             Grows the embryo."""
-        expressions = 0
-        iterations = 0
+        expressions = first_ratio
+        iterations = 1
         # For all development steps
         for _ in range(0, self.dev_steps):
             
@@ -624,9 +624,10 @@ class DevelopGRN():
                 #print('max modules')
                 break
         #print(expressions, iterations)
-        expressed_avg = expressions / (iterations - 1)
+
+        expressed_avg = expressions / iterations
         #print('average is: ' + str(expressed_avg))
-        return self
+        return self, expressed_avg
 
     def place_module(self, cell):
         """Goal:

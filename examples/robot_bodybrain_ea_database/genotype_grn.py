@@ -129,7 +129,7 @@ class Genotype(Base, HasId, BodyGenotypeOrmV2GRN, BrainGenotypeCpgOrm):
             The created robot: ModularRobot.
         """
         # Develop body and brain
-        body = self.develop_body(max_parts, mode_core_mult)
-        brain = self.develop_brain(body = body, include_bias = include_bias)
+        body, expressed_ratio = self.develop_body(max_parts, mode_core_mult)
+        # brain = self.develop_brain(body = body, include_bias = include_bias)
 
-        return ModularRobot(body = body, brain = brain)
+        return expressed_ratio

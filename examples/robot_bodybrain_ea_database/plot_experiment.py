@@ -159,7 +159,7 @@ def process_database(db_path):
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
 
-            .where(Generation.generation_index == 100)
+            .where(Generation.generation_index < 401)
             #.order_by(Individual.fitness.desc())
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [
@@ -218,6 +218,7 @@ def main() -> None:
     all_data['max_fitness_per_group'] = all_data.groupby(['generation_index', 'experiment_id'])['fitness'].transform('max')
     all_data['used_genes'] = all_data['genotype'].apply(lambda x: parsing(x.body))
     all_data['usage_ratio'] = all_data['used_genes'] / all_data['body_length']
+    
     print(all_data)
 # Group by 'generation' and compute the average length
     result = all_data.groupby('generation_index').agg(
@@ -230,10 +231,10 @@ def main() -> None:
     ).reset_index()
     average_std = result['std'].mean()
     print(f"Average std: {average_std}")
-
+    result['crossover'] = config.DATABASE_FILE
     print(result)
-    file_path = 'result.csv'
-    result.to_csv(file_path, index=False)
+    file_path = 'result_nocross.csv'
+    #result.to_csv(file_path, index=False)
 # Line graph
     fig, ax1 = plt.subplots(figsize=(11, 7))
 

@@ -172,7 +172,7 @@ def process_database(db_path):
                 .join_from(Generation, Population, Generation.population_id == Population.id)
                 .join_from(Population, Individual, Population.id == Individual.population_id)
                 .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
-                .where(Generation.generation_index == 100)
+                .where(Generation.generation_index < 401)
                 .where(Generation.experiment_id == run)
 
 
@@ -249,7 +249,8 @@ def main() -> None:
     nucleotide_usage=('usage_ratio','mean')
     ).reset_index()
     print(result)
-    result.to_csv('result_std', index=False)
+    result['crossover'] = config.DATABASE_FILE
+    #result.to_csv('result_standard.csv', index=False)
     #result = pd.read_csv('data.csv')
 # Line graph
     fig, ax1 = plt.subplots(figsize=(11, 7))
@@ -297,7 +298,7 @@ def main() -> None:
     # fig_legend.show()
     # # Save the legend as a standalone PDF
     # fig_legend.savefig("custom_legend.pdf", bbox_inches='tight', dpi=300)
-    plt.savefig(config.DATABASE_FILE + ".pdf", format="pdf")
+    #plt.savefig(config.DATABASE_FILE + ".pdf", format="pdf")
    
     #plt.show()
 

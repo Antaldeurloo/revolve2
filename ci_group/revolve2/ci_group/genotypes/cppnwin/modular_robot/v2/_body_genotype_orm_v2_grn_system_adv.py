@@ -126,33 +126,21 @@ class BodyGenotypeOrmV2GRN_system_adv(orm.MappedAsDataclass, kw_only=True):
                     nucleotide_idx += types_nucleotypes
             nucleotide_idx += 1
         # Sample a promotor site
-        #print('starting test')
         cutpoint1 = rng.choice(promotor_sites1, 1)[0]
-        #print('cutpoint1: ' + str(cutpoint1))
-        #print(promotor_sites1) 
         cutpoint_ratio = cutpoint1 / len(p1) 
-        #print('cutpoint ratio: '+str(cutpoint_ratio))
+
         if cutpoint_ratio < 0.5:
             cutpoint1 = min(promotor_sites1, key=lambda x: abs(x - ((1 - cutpoint_ratio) * len(p1))))
-        #print('cutpoint revised: ' + str(cutpoint1))
+
         cutpoint2_rough = (1 - (cutpoint1 / len(p1))) * len(p2)
-        # Get a subset of the parent genotype
-        subset1 = p1[0:cutpoint1+types_nucleotypes+1]
-        # Append the subset to the new genotype
-
-
         cutpoint2 = min(promotor_sites2, key=lambda x: abs(x - cutpoint2_rough))
-        #print('p2:'+ str(promotor_sites2))
-        #print('cutpoint2: '+str(cutpoint2))
-        #print('lenght 2:'+ str(len(p2)))
+
+        # Get subsets of the parent genotypes
+        subset1 = p1[0:cutpoint1+types_nucleotypes+1]
         subset2 = p2[0:cutpoint2+types_nucleotypes+1]
 
+        # Append the subset to the new genotype
         new_genotype += subset1 + subset2
-    #    print('\n')
-     #   print('parent1 ' + str(len(genotype1)))
-      #  print('parent2 ' + str(len(genotype2)))
-       # print('child ' + str(len(new_genotype)))
-        #print('\n')
 
         return BodyGenotypeOrmV2GRN_system_adv(body = new_genotype)
     

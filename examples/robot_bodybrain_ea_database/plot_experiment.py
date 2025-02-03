@@ -159,7 +159,7 @@ def process_database(db_path):
             .join_from(Population, Individual, Population.id == Individual.population_id)
             .join_from(Individual, Genotype, Individual.genotype_id == Genotype.id)
 
-            .where(Generation.generation_index < 401)
+            .where(Generation.generation_index == 400)
             #.order_by(Individual.fitness.desc())
         ).all() # Individual.body_id where(Experiment.id.label("experiment_id") == int(sys.argv[7]))
     data = [
@@ -218,7 +218,15 @@ def main() -> None:
     all_data['max_fitness_per_group'] = all_data.groupby(['generation_index', 'experiment_id'])['fitness'].transform('max')
     all_data['used_genes'] = all_data['genotype'].apply(lambda x: parsing(x.body))
     all_data['usage_ratio'] = all_data['used_genes'] / all_data['body_length']
-    
+    last_generation_df = all_data.groupby(['generation_index', 'experiment_id']).agg(
+    avg_body_length=('body_length', 'mean'),
+    avg_fitness=('fitness', 'mean'),
+    avg_highest_fitness=('max_fitness_per_group','mean'),
+    total_highest_fitness=('max_fitness_per_group','max'),
+    std=('std_per_group','mean'),
+    nucleotide_usage=('usage_ratio','mean')
+    ).reset_index()
+    last_generation_df.to_csv('last_gen2.csv', index=False)
     print(all_data)
 # Group by 'generation' and compute the average length
     result = all_data.groupby('generation_index').agg(

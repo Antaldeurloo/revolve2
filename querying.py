@@ -3,18 +3,15 @@ import pandas as pd
 #from ci_group.revolve2.ci_group.genotypes.cppnwin._body_genotype_v2_multineat_genotype_pickle_wrapper import MultineatGenotypePickleWrapper
 
 # Connect to the SQLite database
-conn = sqlite3.connect('final_std_cross.sqlite')
+conn = sqlite3.connect('adv_30_vertical_nocross_10runs.sqlite')
 cursor = conn.cursor()
 
 # Run a query
 query = """
     
     
-    SELECT fitness  FROM individual i
-    
-    inner join genotype g on g.id = i.genotype_id
-    order by fitness desc
-    limit 10
+    SELECT * from experiment e
+    limit 100
 
 ;"""  # Replace with your actual table name
 
@@ -25,7 +22,7 @@ query2 = """
     join population p on p.id = g.population_id
     join individual i on i.population_id = p.id
     join genotype ge on ge.id = i.genotype_id
-    where e.id = 2
+    where e.id = 1
     order by g.id desc
     
 

@@ -68,11 +68,11 @@ def process_database(db_path):
         db_path, open_method=OpenMethod.OPEN_IF_EXISTS
     )
     db_path_to_variable = {
-    "adv_30_vertical_10runs.sqlite": {"runs": 2, "start_run_number": 1},
+    "adv_30_vertical_10runs_first.sqlite": {"runs": 2, "start_run_number": 1},
     "adv_30_vertical_10runs_2.sqlite": {"runs": 2, "start_run_number": 3},
-    "adv_30_vertical_10runs_last2.sqlite": {"runs": 3, "start_run_number": 5},
-    "adv_30_vertical_test.sqlite": {"runs": 2, "start_run_number": 8},
-    "final_std_cross.sqlite": {"runs": 1, "start_run_number": 10},
+    "adv_30_vertical_10runs_last3.sqlite": {"runs": 3, "start_run_number": 5},
+    "adv_30_vertical_10runs_continued.sqlite": {"runs": 2, "start_run_number": 8},
+    "adv_30_vertical_10runs_1run.sqlite": {"runs": 1, "start_run_number": 10},
 }
     db_info = db_path_to_variable.get(db_path, None)
     if not db_info:
@@ -83,7 +83,7 @@ def process_database(db_path):
     all_df_list = []
     for run in range(1,number_of_runs+1):
         print(run)
-        if db_path == 'final_std_cross.sqlite':
+        if db_path == 'adv_30_vertical_10runs_1run.sqlite':
             run = 2
         with Session(dbengine) as ses:
             rows = ses.execute(
@@ -133,12 +133,12 @@ def main() -> None:
     
     all_data = pd.DataFrame()
     db_paths = [
-        "adv_30_vertical_10runs.sqlite",
+        "adv_30_vertical_10runs_first.sqlite",
         "adv_30_vertical_10runs_2.sqlite",
-        "adv_30_vertical_10runs_last2.sqlite",
-        "adv_30_vertical_test.sqlite",
-        "final_std_cross.sqlite"]
-    
+        "adv_30_vertical_10runs_last3.sqlite",
+        "adv_30_vertical_10runs_continued.sqlite",
+        "adv_30_vertical_10runs_1run.sqlite"]
+
     all_df_list = []
     for db_path in db_paths:
         all_df_list.append(process_database(db_path))
